@@ -1,6 +1,6 @@
 {
   "name": "@smartmind-team/thanosql-editor",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "",
   "main": "lib/cjs/index.js",
   "module": "lib/es/index.js",
@@ -53,8 +53,5 @@
   "bugs": {
     "url": "https://github.com/smartmind-team/thanosql-editor/issues"
   },
-  "homepage": "https://github.com/smartmind-team/thanosql-editor#readme",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  }
+  "homepage": "https://github.com/smartmind-team/thanosql-editor#readme"
 }

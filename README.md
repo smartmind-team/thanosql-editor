@@ -10,7 +10,7 @@ Node ^v16.17.0(latest)
 git clone https://github.com/smartmind-team/thanosql-editor.git
 cd thanosql-editor
 npm ci
-npm prepare # husky install
+npm run prepare # husky install
 
 # dev build
 npm run dev

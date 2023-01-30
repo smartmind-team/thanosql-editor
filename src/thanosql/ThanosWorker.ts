@@ -1,8 +1,8 @@
 import * as monaco from "monaco-editor-core";
 
 import IWorkerContext = monaco.worker.IWorkerContext;
-import ThanosLanguageService from "../thanosql-service/ThanosLanguageService";
-import { IThanosError } from "../thanosql-service/ThanosErrorListener";
+import ThanosLanguageService from "@/thanosql-service/ThanosLanguageService";
+import { IThanosError } from "@/thanosql-service/ThanosErrorListener";
 
 export class ThanosWorker {
   private _ctx: IWorkerContext;

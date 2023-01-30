@@ -4,3 +4,7 @@ tsconfig.json
 node_modules/
 .antlr
 playground/
+.env
+.git
+.gitignore
+rollup.config.mjs

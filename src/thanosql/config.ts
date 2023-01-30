@@ -3,6 +3,8 @@ import ILanguageExtensionPoint = monaco.languages.ILanguageExtensionPoint;
 import ILanguage = monaco.languages.IMonarchLanguage;
 
 export const languageID = "thanosql";
+export const languageWorkerPath =
+  "@smartmind-team/thanosql-editor@1.0.1/lib/es/thanosql/thanos.worker.js";
 export const languageExtensionPoint: ILanguageExtensionPoint = {
   id: languageID,
 };

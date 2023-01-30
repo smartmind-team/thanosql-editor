@@ -8,16 +8,17 @@ import CompletionItemKind = monacoEditor.languages.CompletionItemKind;
 import { WorkerManager } from "@/thanosql/WorkerManager";
 import { ThanosWorker } from "@/thanosql/ThanosWorker";
 import DiagnosticsAdapter from "@/thanosql/DiagnosticsAdapter";
+import "@/thanosql/thanos.worker";
 
 export function setupLanguage(monaco: any = monacoEditor) {
-  (window as any).MonacoEnvironment = {
-    getWorkerUrl: function (_moduleId, label) {
-      if (label === languageID) {
-        return "./thanosql.worker.js";
-      }
-      return "./editor.worker.js";
-    },
-  };
+  // (window as any).MonacoEnvironment = {
+  //   getWorkerUrl: function (_moduleId, label) {
+  //     if (label === "thanosql") {
+  //       return "node_modules/@smartmind-team/thanosql-editor/lib/es/thanosql/thanos.worker.js";
+  //     }
+  //     return "node_modules/monaco-editor-core/min/vs/base/worker/workerMain.js";
+  //   },
+  // };
 
   monaco.languages.register(languageExtensionPoint);
   monaco.languages.onLanguage(languageID, () => {

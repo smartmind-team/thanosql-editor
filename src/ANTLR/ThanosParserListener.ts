@@ -1,587 +1,479 @@
-// Generated from ./.antlr/ThanosParser.g4 by ANTLR 4.9.0-SNAPSHOT
+// Generated from ./.antlr/thanosParser.g4 by ANTLR 4.9.0-SNAPSHOT
 
 
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
-import { ThanosLanguageContext } from "./ThanosParser";
-import { ThanosQueryContext } from "./ThanosParser";
-import { ThanosStmtContext } from "./ThanosParser";
-import { ThanosSubqueryContext } from "./ThanosParser";
-import { ThanosBuildStmtContext } from "./ThanosParser";
-import { ThanosBuildModelStmtContext } from "./ThanosParser";
-import { ThanosFitStmtContext } from "./ThanosParser";
-import { ThanosModelStmtContext } from "./ThanosParser";
-import { ThanosUploadStmtContext } from "./ThanosParser";
-import { ThanosUploadModelStmtContext } from "./ThanosParser";
-import { ThanosDeleteStmtContext } from "./ThanosParser";
-import { ThanosTransformStmtContext } from "./ThanosParser";
-import { ThanosPredictStmtContext } from "./ThanosParser";
-import { ThanosEvaluateStmtContext } from "./ThanosParser";
-import { ThanosCreateStmtContext } from "./ThanosParser";
-import { ThanosConvertStmtContext } from "./ThanosParser";
-import { ThanosSearchStmtContext } from "./ThanosParser";
-import { ThanosSearchImageStmtContext } from "./ThanosParser";
-import { ThanosSearchAudioStmtContext } from "./ThanosParser";
-import { ThanosSearchVideoStmtContext } from "./ThanosParser";
-import { ThanosSearchKeywordStmtContext } from "./ThanosParser";
-import { ThanosSearchTextStmtContext } from "./ThanosParser";
-import { ThanosPreprocessStmtContext } from "./ThanosParser";
-import { ThanosPreprocessTextStmtContext } from "./ThanosParser";
-import { ThanosPreprocessImageStmtContext } from "./ThanosParser";
-import { ThanosPreprocessAudioStmtContext } from "./ThanosParser";
-import { ThanosPreprocessVideoStmtContext } from "./ThanosParser";
-import { ThanosPrintStmtContext } from "./ThanosParser";
-import { ThanosPrintImageStmtContext } from "./ThanosParser";
-import { ThanosPrintAudioStmtContext } from "./ThanosParser";
-import { ThanosPrintVideoStmtContext } from "./ThanosParser";
-import { ThanosCopyStmtContext } from "./ThanosParser";
-import { ThanosListStmtContext } from "./ThanosParser";
-import { ThanosListTableStmtContext } from "./ThanosParser";
-import { ThanosListModelStmtContext } from "./ThanosParser";
-import { ThanosListThanoSQLModelStmtContext } from "./ThanosParser";
-import { ThanosListThanoSQLTutorialStmtContext } from "./ThanosParser";
-import { ThanosListThanoSQLDatasetStmtContext } from "./ThanosParser";
-import { ThanosGetStmtContext } from "./ThanosParser";
-import { ThanosGetThanoSQLModelStmtContext } from "./ThanosParser";
-import { ThanosGetThanoSQLDatasetStmtContext } from "./ThanosParser";
-import { ThanosUsingModelStmtContext } from "./ThanosParser";
-import { ThanosUsingMethodStmtContext } from "./ThanosParser";
-import { ThanosOptionStmtContext } from "./ThanosParser";
-import { NormalSubqueryContext } from "./ThanosParser";
-import { NormalStmtContext } from "./ThanosParser";
-import { RemainingContext } from "./ThanosParser";
-import { NormalParenExceptionContext } from "./ThanosParser";
+import { ThanosLanguageContext } from "./thanosParser";
+import { ThanosQueryContext } from "./thanosParser";
+import { ThanosStmtContext } from "./thanosParser";
+import { ThanosNoSubqueryStmtContext } from "./thanosParser";
+import { ThanosSubqueryStmtContext } from "./thanosParser";
+import { ThanosSubqueryContext } from "./thanosParser";
+import { ThanosBuildModelStmtContext } from "./thanosParser";
+import { ThanosFitModelStmtContext } from "./thanosParser";
+import { ThanosUploadModelStmtContext } from "./thanosParser";
+import { ThanosDeleteModelStmtContext } from "./thanosParser";
+import { ThanosPredictStmtContext } from "./thanosParser";
+import { ThanosEvaluateStmtContext } from "./thanosParser";
+import { ThanosConvertStmtContext } from "./thanosParser";
+import { ThanosSearchStmtContext } from "./thanosParser";
+import { ThanosSearchImageStmtContext } from "./thanosParser";
+import { ThanosSearchAudioStmtContext } from "./thanosParser";
+import { ThanosSearchVideoStmtContext } from "./thanosParser";
+import { ThanosSearchKeywordStmtContext } from "./thanosParser";
+import { ThanosSearchTextStmtContext } from "./thanosParser";
+import { ThanosFunctionStmtContext } from "./thanosParser";
+import { ThanosPrintStmtContext } from "./thanosParser";
+import { ThanosPrintImageStmtContext } from "./thanosParser";
+import { ThanosPrintAudioStmtContext } from "./thanosParser";
+import { ThanosPrintVideoStmtContext } from "./thanosParser";
+import { ThanosCopyStmtContext } from "./thanosParser";
+import { ThanosListStmtContext } from "./thanosParser";
+import { ThanosListTableStmtContext } from "./thanosParser";
+import { ThanosListModelStmtContext } from "./thanosParser";
+import { ThanosListThanoSQLModelStmtContext } from "./thanosParser";
+import { ThanosListThanoSQLDatasetStmtContext } from "./thanosParser";
+import { ThanosGetStmtContext } from "./thanosParser";
+import { ThanosGetThanoSQLModelStmtContext } from "./thanosParser";
+import { ThanosGetThanoSQLDatasetStmtContext } from "./thanosParser";
+import { ThanosUsingStmtContext } from "./thanosParser";
+import { ThanosOptionStmtContext } from "./thanosParser";
+import { NormalSubqueryContext } from "./thanosParser";
+import { NormalStmtContext } from "./thanosParser";
+import { RemainingContext } from "./thanosParser";
+import { NormalParenExceptionContext } from "./thanosParser";
 
 
 /**
  * This interface defines a complete listener for a parse tree produced by
- * `ThanosParser`.
+ * `thanosParser`.
  */
-export interface ThanosParserListener extends ParseTreeListener {
+export interface thanosParserListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosLanguage`.
+	 * Enter a parse tree produced by `thanosParser.thanosLanguage`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosLanguage?: (ctx: ThanosLanguageContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosLanguage`.
+	 * Exit a parse tree produced by `thanosParser.thanosLanguage`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosLanguage?: (ctx: ThanosLanguageContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosQuery`.
+	 * Enter a parse tree produced by `thanosParser.thanosQuery`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosQuery?: (ctx: ThanosQueryContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosQuery`.
+	 * Exit a parse tree produced by `thanosParser.thanosQuery`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosQuery?: (ctx: ThanosQueryContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosStmt?: (ctx: ThanosStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosStmt?: (ctx: ThanosStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosSubquery`.
+	 * Enter a parse tree produced by `thanosParser.thanosNoSubqueryStmt`.
+	 * @param ctx the parse tree
+	 */
+	enterThanosNoSubqueryStmt?: (ctx: ThanosNoSubqueryStmtContext) => void;
+	/**
+	 * Exit a parse tree produced by `thanosParser.thanosNoSubqueryStmt`.
+	 * @param ctx the parse tree
+	 */
+	exitThanosNoSubqueryStmt?: (ctx: ThanosNoSubqueryStmtContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `thanosParser.thanosSubqueryStmt`.
+	 * @param ctx the parse tree
+	 */
+	enterThanosSubqueryStmt?: (ctx: ThanosSubqueryStmtContext) => void;
+	/**
+	 * Exit a parse tree produced by `thanosParser.thanosSubqueryStmt`.
+	 * @param ctx the parse tree
+	 */
+	exitThanosSubqueryStmt?: (ctx: ThanosSubqueryStmtContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `thanosParser.thanosSubquery`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosSubquery?: (ctx: ThanosSubqueryContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosSubquery`.
+	 * Exit a parse tree produced by `thanosParser.thanosSubquery`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosSubquery?: (ctx: ThanosSubqueryContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosBuildStmt`.
-	 * @param ctx the parse tree
-	 */
-	enterThanosBuildStmt?: (ctx: ThanosBuildStmtContext) => void;
-	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosBuildStmt`.
-	 * @param ctx the parse tree
-	 */
-	exitThanosBuildStmt?: (ctx: ThanosBuildStmtContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosBuildModelStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosBuildModelStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosBuildModelStmt?: (ctx: ThanosBuildModelStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosBuildModelStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosBuildModelStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosBuildModelStmt?: (ctx: ThanosBuildModelStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosFitStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosFitModelStmt`.
 	 * @param ctx the parse tree
 	 */
-	enterThanosFitStmt?: (ctx: ThanosFitStmtContext) => void;
+	enterThanosFitModelStmt?: (ctx: ThanosFitModelStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosFitStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosFitModelStmt`.
 	 * @param ctx the parse tree
 	 */
-	exitThanosFitStmt?: (ctx: ThanosFitStmtContext) => void;
+	exitThanosFitModelStmt?: (ctx: ThanosFitModelStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosModelStmt`.
-	 * @param ctx the parse tree
-	 */
-	enterThanosModelStmt?: (ctx: ThanosModelStmtContext) => void;
-	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosModelStmt`.
-	 * @param ctx the parse tree
-	 */
-	exitThanosModelStmt?: (ctx: ThanosModelStmtContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosUploadStmt`.
-	 * @param ctx the parse tree
-	 */
-	enterThanosUploadStmt?: (ctx: ThanosUploadStmtContext) => void;
-	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosUploadStmt`.
-	 * @param ctx the parse tree
-	 */
-	exitThanosUploadStmt?: (ctx: ThanosUploadStmtContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosUploadModelStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosUploadModelStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosUploadModelStmt?: (ctx: ThanosUploadModelStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosUploadModelStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosUploadModelStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosUploadModelStmt?: (ctx: ThanosUploadModelStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosDeleteStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosDeleteModelStmt`.
 	 * @param ctx the parse tree
 	 */
-	enterThanosDeleteStmt?: (ctx: ThanosDeleteStmtContext) => void;
+	enterThanosDeleteModelStmt?: (ctx: ThanosDeleteModelStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosDeleteStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosDeleteModelStmt`.
 	 * @param ctx the parse tree
 	 */
-	exitThanosDeleteStmt?: (ctx: ThanosDeleteStmtContext) => void;
+	exitThanosDeleteModelStmt?: (ctx: ThanosDeleteModelStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosTransformStmt`.
-	 * @param ctx the parse tree
-	 */
-	enterThanosTransformStmt?: (ctx: ThanosTransformStmtContext) => void;
-	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosTransformStmt`.
-	 * @param ctx the parse tree
-	 */
-	exitThanosTransformStmt?: (ctx: ThanosTransformStmtContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosPredictStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosPredictStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosPredictStmt?: (ctx: ThanosPredictStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosPredictStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosPredictStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosPredictStmt?: (ctx: ThanosPredictStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosEvaluateStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosEvaluateStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosEvaluateStmt?: (ctx: ThanosEvaluateStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosEvaluateStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosEvaluateStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosEvaluateStmt?: (ctx: ThanosEvaluateStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosCreateStmt`.
-	 * @param ctx the parse tree
-	 */
-	enterThanosCreateStmt?: (ctx: ThanosCreateStmtContext) => void;
-	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosCreateStmt`.
-	 * @param ctx the parse tree
-	 */
-	exitThanosCreateStmt?: (ctx: ThanosCreateStmtContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosConvertStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosConvertStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosConvertStmt?: (ctx: ThanosConvertStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosConvertStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosConvertStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosConvertStmt?: (ctx: ThanosConvertStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosSearchStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosSearchStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosSearchStmt?: (ctx: ThanosSearchStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosSearchStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosSearchStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosSearchStmt?: (ctx: ThanosSearchStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosSearchImageStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosSearchImageStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosSearchImageStmt?: (ctx: ThanosSearchImageStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosSearchImageStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosSearchImageStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosSearchImageStmt?: (ctx: ThanosSearchImageStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosSearchAudioStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosSearchAudioStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosSearchAudioStmt?: (ctx: ThanosSearchAudioStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosSearchAudioStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosSearchAudioStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosSearchAudioStmt?: (ctx: ThanosSearchAudioStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosSearchVideoStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosSearchVideoStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosSearchVideoStmt?: (ctx: ThanosSearchVideoStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosSearchVideoStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosSearchVideoStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosSearchVideoStmt?: (ctx: ThanosSearchVideoStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosSearchKeywordStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosSearchKeywordStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosSearchKeywordStmt?: (ctx: ThanosSearchKeywordStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosSearchKeywordStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosSearchKeywordStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosSearchKeywordStmt?: (ctx: ThanosSearchKeywordStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosSearchTextStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosSearchTextStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosSearchTextStmt?: (ctx: ThanosSearchTextStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosSearchTextStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosSearchTextStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosSearchTextStmt?: (ctx: ThanosSearchTextStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosPreprocessStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosFunctionStmt`.
 	 * @param ctx the parse tree
 	 */
-	enterThanosPreprocessStmt?: (ctx: ThanosPreprocessStmtContext) => void;
+	enterThanosFunctionStmt?: (ctx: ThanosFunctionStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosPreprocessStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosFunctionStmt`.
 	 * @param ctx the parse tree
 	 */
-	exitThanosPreprocessStmt?: (ctx: ThanosPreprocessStmtContext) => void;
+	exitThanosFunctionStmt?: (ctx: ThanosFunctionStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosPreprocessTextStmt`.
-	 * @param ctx the parse tree
-	 */
-	enterThanosPreprocessTextStmt?: (ctx: ThanosPreprocessTextStmtContext) => void;
-	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosPreprocessTextStmt`.
-	 * @param ctx the parse tree
-	 */
-	exitThanosPreprocessTextStmt?: (ctx: ThanosPreprocessTextStmtContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosPreprocessImageStmt`.
-	 * @param ctx the parse tree
-	 */
-	enterThanosPreprocessImageStmt?: (ctx: ThanosPreprocessImageStmtContext) => void;
-	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosPreprocessImageStmt`.
-	 * @param ctx the parse tree
-	 */
-	exitThanosPreprocessImageStmt?: (ctx: ThanosPreprocessImageStmtContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosPreprocessAudioStmt`.
-	 * @param ctx the parse tree
-	 */
-	enterThanosPreprocessAudioStmt?: (ctx: ThanosPreprocessAudioStmtContext) => void;
-	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosPreprocessAudioStmt`.
-	 * @param ctx the parse tree
-	 */
-	exitThanosPreprocessAudioStmt?: (ctx: ThanosPreprocessAudioStmtContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosPreprocessVideoStmt`.
-	 * @param ctx the parse tree
-	 */
-	enterThanosPreprocessVideoStmt?: (ctx: ThanosPreprocessVideoStmtContext) => void;
-	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosPreprocessVideoStmt`.
-	 * @param ctx the parse tree
-	 */
-	exitThanosPreprocessVideoStmt?: (ctx: ThanosPreprocessVideoStmtContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosPrintStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosPrintStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosPrintStmt?: (ctx: ThanosPrintStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosPrintStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosPrintStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosPrintStmt?: (ctx: ThanosPrintStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosPrintImageStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosPrintImageStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosPrintImageStmt?: (ctx: ThanosPrintImageStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosPrintImageStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosPrintImageStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosPrintImageStmt?: (ctx: ThanosPrintImageStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosPrintAudioStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosPrintAudioStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosPrintAudioStmt?: (ctx: ThanosPrintAudioStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosPrintAudioStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosPrintAudioStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosPrintAudioStmt?: (ctx: ThanosPrintAudioStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosPrintVideoStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosPrintVideoStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosPrintVideoStmt?: (ctx: ThanosPrintVideoStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosPrintVideoStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosPrintVideoStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosPrintVideoStmt?: (ctx: ThanosPrintVideoStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosCopyStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosCopyStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosCopyStmt?: (ctx: ThanosCopyStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosCopyStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosCopyStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosCopyStmt?: (ctx: ThanosCopyStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosListStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosListStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosListStmt?: (ctx: ThanosListStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosListStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosListStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosListStmt?: (ctx: ThanosListStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosListTableStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosListTableStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosListTableStmt?: (ctx: ThanosListTableStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosListTableStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosListTableStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosListTableStmt?: (ctx: ThanosListTableStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosListModelStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosListModelStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosListModelStmt?: (ctx: ThanosListModelStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosListModelStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosListModelStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosListModelStmt?: (ctx: ThanosListModelStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosListThanoSQLModelStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosListThanoSQLModelStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosListThanoSQLModelStmt?: (ctx: ThanosListThanoSQLModelStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosListThanoSQLModelStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosListThanoSQLModelStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosListThanoSQLModelStmt?: (ctx: ThanosListThanoSQLModelStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosListThanoSQLTutorialStmt`.
-	 * @param ctx the parse tree
-	 */
-	enterThanosListThanoSQLTutorialStmt?: (ctx: ThanosListThanoSQLTutorialStmtContext) => void;
-	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosListThanoSQLTutorialStmt`.
-	 * @param ctx the parse tree
-	 */
-	exitThanosListThanoSQLTutorialStmt?: (ctx: ThanosListThanoSQLTutorialStmtContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosListThanoSQLDatasetStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosListThanoSQLDatasetStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosListThanoSQLDatasetStmt?: (ctx: ThanosListThanoSQLDatasetStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosListThanoSQLDatasetStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosListThanoSQLDatasetStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosListThanoSQLDatasetStmt?: (ctx: ThanosListThanoSQLDatasetStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosGetStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosGetStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosGetStmt?: (ctx: ThanosGetStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosGetStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosGetStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosGetStmt?: (ctx: ThanosGetStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosGetThanoSQLModelStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosGetThanoSQLModelStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosGetThanoSQLModelStmt?: (ctx: ThanosGetThanoSQLModelStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosGetThanoSQLModelStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosGetThanoSQLModelStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosGetThanoSQLModelStmt?: (ctx: ThanosGetThanoSQLModelStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosGetThanoSQLDatasetStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosGetThanoSQLDatasetStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosGetThanoSQLDatasetStmt?: (ctx: ThanosGetThanoSQLDatasetStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosGetThanoSQLDatasetStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosGetThanoSQLDatasetStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosGetThanoSQLDatasetStmt?: (ctx: ThanosGetThanoSQLDatasetStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosUsingModelStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosUsingStmt`.
 	 * @param ctx the parse tree
 	 */
-	enterThanosUsingModelStmt?: (ctx: ThanosUsingModelStmtContext) => void;
+	enterThanosUsingStmt?: (ctx: ThanosUsingStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosUsingModelStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosUsingStmt`.
 	 * @param ctx the parse tree
 	 */
-	exitThanosUsingModelStmt?: (ctx: ThanosUsingModelStmtContext) => void;
+	exitThanosUsingStmt?: (ctx: ThanosUsingStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosUsingMethodStmt`.
-	 * @param ctx the parse tree
-	 */
-	enterThanosUsingMethodStmt?: (ctx: ThanosUsingMethodStmtContext) => void;
-	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosUsingMethodStmt`.
-	 * @param ctx the parse tree
-	 */
-	exitThanosUsingMethodStmt?: (ctx: ThanosUsingMethodStmtContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `ThanosParser.thanosOptionStmt`.
+	 * Enter a parse tree produced by `thanosParser.thanosOptionStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterThanosOptionStmt?: (ctx: ThanosOptionStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.thanosOptionStmt`.
+	 * Exit a parse tree produced by `thanosParser.thanosOptionStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitThanosOptionStmt?: (ctx: ThanosOptionStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.normalSubquery`.
+	 * Enter a parse tree produced by `thanosParser.normalSubquery`.
 	 * @param ctx the parse tree
 	 */
 	enterNormalSubquery?: (ctx: NormalSubqueryContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.normalSubquery`.
+	 * Exit a parse tree produced by `thanosParser.normalSubquery`.
 	 * @param ctx the parse tree
 	 */
 	exitNormalSubquery?: (ctx: NormalSubqueryContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.normalStmt`.
+	 * Enter a parse tree produced by `thanosParser.normalStmt`.
 	 * @param ctx the parse tree
 	 */
 	enterNormalStmt?: (ctx: NormalStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.normalStmt`.
+	 * Exit a parse tree produced by `thanosParser.normalStmt`.
 	 * @param ctx the parse tree
 	 */
 	exitNormalStmt?: (ctx: NormalStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.remaining`.
+	 * Enter a parse tree produced by `thanosParser.remaining`.
 	 * @param ctx the parse tree
 	 */
 	enterRemaining?: (ctx: RemainingContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.remaining`.
+	 * Exit a parse tree produced by `thanosParser.remaining`.
 	 * @param ctx the parse tree
 	 */
 	exitRemaining?: (ctx: RemainingContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ThanosParser.normalParenException`.
+	 * Enter a parse tree produced by `thanosParser.normalParenException`.
 	 * @param ctx the parse tree
 	 */
 	enterNormalParenException?: (ctx: NormalParenExceptionContext) => void;
 	/**
-	 * Exit a parse tree produced by `ThanosParser.normalParenException`.
+	 * Exit a parse tree produced by `thanosParser.normalParenException`.
 	 * @param ctx the parse tree
 	 */
 	exitNormalParenException?: (ctx: NormalParenExceptionContext) => void;

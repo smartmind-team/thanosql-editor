@@ -4,7 +4,7 @@ import App from "./App";
 import "./index.css";
 
 import defaultWorker from "monaco-editor-core/esm/vs/editor/editor.worker?worker";
-import thanosWorker from "@smartmind-team/thanosql-editor/lib/es/thanosql/thanos.worker?worker";
+import thanosWorker from "../../lib/esm/thanosql/thanos.worker?worker";
 
 (self as any).MonacoEnvironment = {
   getWorker: function (_: any, label: string) {

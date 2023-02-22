@@ -1,5 +1,5 @@
-import { ThanosParser, ThanosLanguageContext } from "../ANTLR/ThanosParser";
-import { ThanosLexer } from "../ANTLR/ThanosLexer";
+import { thanosParser, ThanosLanguageContext } from "@/ANTLR/thanosParser";
+import { thanosLexer } from "@/ANTLR/thanosLexer";
 import { CharStreams, CommonTokenStream } from "antlr4ts";
 import ThanosErrorListener, { IThanosError } from "./ThanosErrorListener";
 
@@ -8,13 +8,13 @@ export default function parse(code: string): {
   errors: IThanosError[];
 } {
   const inputStream = CharStreams.fromString(code);
-  const lexer = new ThanosLexer(inputStream);
+  const lexer = new thanosLexer(inputStream);
   lexer.removeErrorListeners();
   const thanosErrorsListener = new ThanosErrorListener();
   lexer.addErrorListener(thanosErrorsListener);
 
   const tokenStream = new CommonTokenStream(lexer);
-  const parser = new ThanosParser(tokenStream);
+  const parser = new thanosParser(tokenStream);
   parser.removeErrorListeners();
   parser.addErrorListener(thanosErrorsListener);
 

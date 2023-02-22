@@ -11,15 +11,6 @@ import DiagnosticsAdapter from "@/thanosql/DiagnosticsAdapter";
 import "@/thanosql/thanos.worker";
 
 export function setupLanguage(monaco: any = monacoEditor) {
-  // (window as any).MonacoEnvironment = {
-  //   getWorkerUrl: function (_moduleId, label) {
-  //     if (label === "thanosql") {
-  //       return "node_modules/@smartmind-team/thanosql-editor/lib/es/thanosql/thanos.worker.js";
-  //     }
-  //     return "node_modules/monaco-editor-core/min/vs/base/worker/workerMain.js";
-  //   },
-  // };
-
   monaco.languages.register(languageExtensionPoint);
   monaco.languages.onLanguage(languageID, () => {
     monaco.languages.setMonarchTokensProvider(languageID, monarchLanguage);
@@ -37,17 +28,32 @@ export function setupLanguage(monaco: any = monacoEditor) {
   monaco.languages.registerCompletionItemProvider(languageID, {
     provideCompletionItems: (model, position) => {
       const suggestions = [
-        ...monarchLanguage.keywords.map((k: string) => ({
+        ...monarchLanguage.thanosqlKeywords.map((k: string) => ({
           label: k,
           kind: CompletionItemKind.Keyword,
           insertText: k,
         })),
-        ...monarchLanguage.operators.map((k: string) => ({
+        ...monarchLanguage.thanosqlOperators.map((k: string) => ({
           label: k,
           kind: CompletionItemKind.Operator,
           insertText: k,
         })),
-        ...monarchLanguage.builtinFunctions.map((k: string) => ({
+        ...monarchLanguage.pgKeywords.map((k: string) => ({
+          label: k,
+          kind: CompletionItemKind.Function,
+          insertText: k,
+        })),
+        ...monarchLanguage.pgOperators.map((k: string) => ({
+          label: k,
+          kind: CompletionItemKind.Function,
+          insertText: k,
+        })),
+        ...monarchLanguage.pgBuiltinFunctions.map((k: string) => ({
+          label: k,
+          kind: CompletionItemKind.Function,
+          insertText: k,
+        })),
+        ...monarchLanguage.pgBuiltinVariables.map((k: string) => ({
           label: k,
           kind: CompletionItemKind.Function,
           insertText: k,
@@ -57,29 +63,39 @@ export function setupLanguage(monaco: any = monacoEditor) {
     },
   });
 
+  //   monaco.editor.defineTheme('myCustomTheme', {
+  //     base: 'vs', // can also be vs-dark or hc-black
+  //     inherit: true, // can also be false to completely replace the builtin rules
+  //     rules: [
+  //         { token: 'thanosql-keyword', foreground: '#604BCC', fontStyle: 'bold'},
+  //         { token: 'thanosql-operator', foreground: '#B05A9F', fontStyle: 'bold'},
+  //         { token: 'pg-keyword', foreground: '#604BCC'},
+  //         { token: 'pg-operator', foreground: '#B05A9F'},
+  //         {token : 'pg-predefined', foreground: '#42988F'}
+  //     ],
+  //     colors: {
+  //         'editor.foreground': '#000000',
+  //     }
+  // });
+
+  // keyword - #604BCC
+  // operator - #B05A9F
+  // builtin function - #42988F
   monaco.editor.defineTheme("thanosql-light", {
     base: "vs",
     inherit: true,
     rules: [
-      {
-        token: "keyword",
-        foreground: "#604bcc",
-      },
-      {
-        token: "operator",
-        foreground: "#457BD9",
-      },
-      {
-        token: "operator.thanosql",
-        fontStyle: "bold",
-      },
-      {
-        token: "string",
-        foreground: "#8C8B92",
-      },
+      { token: "thanosql-keyword", foreground: "#604BCC", fontStyle: "bold" },
+      { token: "thanosql-operator", foreground: "#B05A9F", fontStyle: "bold" },
+      { token: "pg-keyword", foreground: "#604BCC" },
+      { token: "pg-operator", foreground: "#B05A9F" },
+      { token: "pg-predefined", foreground: "#42988F" },
+      { token: "operator", foreground: "#B05A9F" },
     ],
     colors: {
       "editor.foreground": "#000000",
+      "editor.lineHighlightBackground": "#00000000",
+      "editor.lineHighlightBorder": "#00000000",
     },
   });
 }

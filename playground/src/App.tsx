@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 // import "./App.css";
-import { setupLanguage } from "../../lib/es/thanosql/setup";
+import { setupLanguage } from "../../lib/esm/thanosql/setup";
 // import Editor, { Monaco } from "@monaco-editor/react";
-import Editor from "../../lib/es";
+import Editor from "../../lib/esm";
 
 function App() {
   // function handleEditorWillMount(monaco: Monaco) {

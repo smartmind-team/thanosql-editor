@@ -1,3 +1,4 @@
-import Editor from "./Editor";
+import "./index.css";
+import Editor from "./components/Editor";
 
 export default Editor;

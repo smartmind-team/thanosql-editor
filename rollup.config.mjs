@@ -5,9 +5,17 @@ import PeerDepsExternalPlugin from "rollup-plugin-peer-deps-external";
 import typescript from "rollup-plugin-typescript2";
 import ttypescript from "ttypescript";
 import nodePolyfills from "rollup-plugin-node-polyfills";
+import copy from "rollup-plugin-copy";
+import css from "rollup-plugin-import-css";
 
-const external = ["react", "react-dom", "monaco-editor-core"];
-const extensions = [".js", ".jsx", ".ts", ".tsx"];
+const external = [
+  "react",
+  "react-dom",
+  "monaco-editor-core",
+  /\.svg$/,
+  /\.css$/,
+];
+const extensions = [".js", ".jsx", ".ts", ".tsx", ".svg", ".css"];
 const defaultNodeResolveConfig = {
   exportsCondition: ["node"],
   extensions,
@@ -19,11 +27,14 @@ const defaultNodeResolveConfig = {
 const nodeResolvePlugin = nodeResolve(defaultNodeResolveConfig);
 
 const commonPlugins = [
+  typescript({
+    typescript: ttypescript,
+    tsconfig: "./tsconfig.json",
+  }),
   PeerDepsExternalPlugin(),
   nodeResolvePlugin,
   nodePolyfills(),
   babel({
-    // presets: ["@babel/preset-env", "react", "antlr4ts"],
     include: ["src/**/*/"],
     exclude: /node_modules/,
     babelHelpers: "runtime",
@@ -32,16 +43,17 @@ const commonPlugins = [
   commonjs({
     include: /node_modules/,
   }),
-  typescript({
-    typescript: ttypescript,
-    tsconfig: "tsconfig.json",
+  copy({
+    targets: [{ src: "src/type.d.ts", dest: "lib/" }],
   }),
+  css({ include: ["./index.css"] }),
 ];
 
 process.env.BABEL_ENV = "production";
 
 export default [
   {
+    cache: false,
     input: "src/index.ts",
     external,
     output: {
@@ -50,59 +62,35 @@ export default [
       exports: "named",
       preserveModules: true,
     },
-    plugins: commonPlugins,
+    plugins: [
+      ...commonPlugins,
+      copy({
+        targets: [
+          { src: "src/assets", dest: "lib/cjs" },
+          { src: "src/index.css", dest: "lib/cjs" },
+        ],
+      }),
+    ],
     context: "window",
   },
   {
+    cache: false,
     input: "src/index.ts",
     external,
     output: {
-      dir: "lib/es/",
+      dir: "lib/esm/",
       format: "es",
       preserveModules: true,
     },
-    plugins: commonPlugins,
+    plugins: [
+      ...commonPlugins,
+      copy({
+        targets: [
+          { src: "src/assets", dest: "lib/esm" },
+          { src: "src/index.css", dest: "lib/esm" },
+        ],
+      }),
+    ],
     context: "window",
   },
-  // {
-  //   input: "src/thanosql/thanos.worker.ts",
-  //   external,
-  //   output: {
-  //     dir: "lib/es/",
-  //     format: "es",
-  //     preserveModules: true,
-  //   },
-  //   plugins: commonPlugins,
-  //   context: "window",
-  // },
-  // {
-  //   input: "src/thanosql/thanos.worker.ts",
-  //   external,
-
-  //   output: {
-  //     name: "thanos.worker",
-  //     exports: "auto",
-  //     file: "lib/thanosql.worker.js",
-  //     format: "umd",
-  //     globals: {
-  //       react: "React",
-  //       "monaco-editor-core/esm/vs/editor/editor.worker": "worker",
-  //       "antlr4ts/atn/ATN": "ATN",
-  //       "antlr4ts/atn/ATNDeserializer": "ATNDeserializer",
-  //       "antlr4ts/FailedPredicateException": "FailedPredicateException",
-  //       "antlr4ts/NoViableAltException": "NoViableAltException",
-  //       "antlr4ts/Parser": "Parser",
-  //       "antlr4ts/ParserRuleContext": "ParserRuleContext",
-  //       "antlr4ts/atn/ParserATNSimulator": "ParserATNSimulator",
-  //       "antlr4ts/RecognitionException": "RecognitionException",
-  //       "antlr4ts/VocabularyImpl": "VocabularyImpl",
-  //       "antlr4ts/misc/Utils": "Utils",
-  //       "antlr4ts/Lexer": "Lexer",
-  //       "antlr4ts/atn/LexerATNSimulator": "LexerATNSimulator",
-  //       antlr4ts: "antlr4ts",
-  //     },
-  //   },
-  //   plugins: commonPlugins,
-  //   context: "window",
-  // },
 ];

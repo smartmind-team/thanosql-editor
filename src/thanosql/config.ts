@@ -8,15 +8,56 @@ export const languageWorkerPath =
 export const languageExtensionPoint: ILanguageExtensionPoint = {
   id: languageID,
 };
+export const conf = {
+  comments: {
+    lineComment: "--",
+    blockComment: ["/*", "*/"],
+  },
+  brackets: [
+    ["{", "}"],
+    ["[", "]"],
+    ["(", ")"],
+  ],
+  autoClosingPairs: [
+    { open: "{", close: "}" },
+    { open: "[", close: "]" },
+    { open: "(", close: ")" },
+    { open: '"', close: '"' },
+    { open: "'", close: "'" },
+  ],
+  surroundingPairs: [
+    { open: "{", close: "}" },
+    { open: "[", close: "]" },
+    { open: "(", close: ")" },
+    { open: '"', close: '"' },
+    { open: "'", close: "'" },
+  ],
+};
+
 export const monarchLanguage: ILanguage = {
-  defaultToken: "invalid",
+  defaultToken: "",
+  tokenPostfix: ".sql",
   ignoreCase: true,
+
   brackets: [
     { open: "[", close: "]", token: "delimiter.square" },
     { open: "(", close: ")", token: "delimiter.parenthesis" },
   ],
-
-  keywords: [
+  thanosqlKeywords: [
+    "BUILD",
+    "MODEL",
+    "PREDICT",
+    "EVALUATE",
+    "FIT",
+    "UPLOAD",
+    "DATASET",
+    "TUTORIAL",
+    "PREPROCESS",
+    "UPDATE",
+    "TABLE",
+  ],
+  thanosqlOperators: ["USING", "AS", "OPTIONS"],
+  pgKeywords: [
     "ABORT_AFTER_WAIT",
     "ABSENT",
     "ABSOLUTE",
@@ -565,7 +606,6 @@ export const monarchLanguage: ILanguage = {
     "OPTIMISTIC",
     "OPTIMIZE",
     "OPTION",
-    "OPTIONS",
     "ORDER",
     "OUT",
     "OUTPUT",
@@ -928,8 +968,7 @@ export const monarchLanguage: ILanguage = {
     "YMAX",
     "YMIN",
   ],
-  operators: [
-    "thanosql",
+  pgOperators: [
     // Logical
     "ALL",
     "AND",
@@ -965,7 +1004,7 @@ export const monarchLanguage: ILanguage = {
     // Merging
     "MATCHED",
   ],
-  builtinFunctions: [
+  pgBuiltinFunctions: [
     // Aggregate
     "AVG",
     "CHECKSUM_AGG",
@@ -1245,7 +1284,7 @@ export const monarchLanguage: ILanguage = {
     // ServiceBroker
     "GET_TRANSMISSION_STATUS",
   ],
-  builtinVariables: [
+  pgBuiltinVariables: [
     // Configuration
     "@@DATEFIRST",
     "@@DBTS",
@@ -1303,10 +1342,12 @@ export const monarchLanguage: ILanguage = {
         /[\w@#$]+/,
         {
           cases: {
-            "@keywords": "keyword",
-            "@operators": "operator",
-            "@builtinVariables": "predefined",
-            "@builtinFunctions": "predefined",
+            "@thanosqlKeywords": "thanosql-keyword",
+            "@thanosqlOperators": "thanosql-operator",
+            "@pgKeywords": "pg-keyword",
+            "@pgOperators": "pg-operator",
+            "@pgBuiltinVariables": "pg-predefined",
+            "@pgBuiltinFunctions": "pg-predefined",
             "@default": "identifier",
           },
         },
@@ -1379,7 +1420,6 @@ export const monarchLanguage: ILanguage = {
       [/END\b/i, { token: "keyword.block" }],
       [/WHEN\b/i, { token: "keyword.choice" }],
       [/THEN\b/i, { token: "keyword.choice" }],
-      [/%%thanosql/i, { token: "operator.thanosql" }],
     ],
   },
 };

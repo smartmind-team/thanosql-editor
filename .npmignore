@@ -8,3 +8,4 @@ playground/
 .git
 .gitignore
 rollup.config.mjs
+.github

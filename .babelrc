@@ -4,7 +4,11 @@
     "@babel/preset-react",
     [
       "react-app",
-      { "flow": false, "typescript": true, "absoluteRuntime": false }
+      {
+        "flow": false,
+        "typescript": true,
+        "absoluteRuntime": false
+      }
     ]
   ]
 }

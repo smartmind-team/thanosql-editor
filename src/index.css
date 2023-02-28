@@ -3,32 +3,10 @@
 }
 
 /* padding between the gutter and code */
-.monaco-editor .view-line {
+.monaco-editor .lines-content {
   padding-left: 8px;
 }
 
-/* fix cursor location */
-.monaco-editor .cursor {
-  margin-left: 8px;
-}
-
-/* fix highlighted text selection */
-.monaco-editor .selectionHighlight {
-  margin-left: 8px;
-}
-
-/* fix highlighted brackets */
-.monaco-editor .bracket-match {
-  margin-left: 8px;
-}
-
-/* fix multiline text selection */
-.monaco-editor .cslr.selected-text {
-  margin-left: 8px;
-}
-
-/* fix multiline text selection */
-.monaco-editor .bottom-left-radius,
-.monaco-editor .top-left-radius {
-  margin-left: 8px;
+.monaco-editor .view-line > span > span {
+  font-family: monospace;
 }

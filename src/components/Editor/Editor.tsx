@@ -5,7 +5,7 @@ import EditorLauncher, {
   EditorLauncherProps,
 } from "@/components/EditorLauncher";
 
-const Editor: React.FC<IEditorProps> = ({
+const Editor: React.FC<EditorProps> = ({
   language = "thanosql",
   defaultValue,
   width,
@@ -14,9 +14,7 @@ const Editor: React.FC<IEditorProps> = ({
   onStartQuery,
   onStopQuery,
   ...props
-}: IEditorProps &
-  React.HTMLAttributes<HTMLDivElement> &
-  Omit<EditorLauncherProps, "editor">) => {
+}) => {
   let divNode;
   const [editor, setEditor] = useState(null);
   const effectCalled = React.useRef<boolean>(false);
@@ -29,7 +27,7 @@ const Editor: React.FC<IEditorProps> = ({
   const ro = new ResizeObserver((entries) => {
     entries.forEach((entry) => {
       const { width, height } = entry.contentRect;
-      (self as any).editor?.layout({
+      (window as any).editor?.layout({
         width,
         height,
       });
@@ -94,11 +92,15 @@ const Editor: React.FC<IEditorProps> = ({
   );
 };
 
-export interface IEditorProps {
+export interface EditorCustomProps {
   language?: string;
   defaultValue?: string;
   width?: string | number;
   height?: string | number;
 }
+
+export type EditorProps = EditorCustomProps &
+  React.HTMLAttributes<HTMLDivElement> &
+  Omit<EditorLauncherProps, "editor">;
 
 export default Editor;

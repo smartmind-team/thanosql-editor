@@ -92,5 +92,5 @@ jobs:
       - name: Push changes to repository
         uses: ad-m/github-push-action@v0.6.0
         with:
-          github_token: ${{ secrets.PAT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
           branch: ${{ github.ref }}

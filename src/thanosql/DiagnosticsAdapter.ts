@@ -13,7 +13,7 @@ export default class DiagnosticsAdapter {
         clearTimeout(handle);
         handle = setTimeout(() => {
           this.validate(model.uri);
-          console.log("validate call");
+          // console.log("validate call");
         }, 500);
       });
 
@@ -28,7 +28,6 @@ export default class DiagnosticsAdapter {
     const worker = await this.worker(resource);
     // call the validate method proxy from the language service and get errors
     const errorMarkers = await worker.doValidation();
-    console.log(errorMarkers);
     // get the current model(editor or file) which is only one
     const model = monaco.editor.getModel(resource);
     // add the error markers and underline them with severity of Error

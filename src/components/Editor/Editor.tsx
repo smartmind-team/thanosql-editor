@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import * as monaco from "monaco-editor-core";
 import { setupLanguage } from "@/thanosql/setup";
 import EditorLauncher, {
   EditorLauncherProps,
 } from "@/components/EditorLauncher";
+import { WorkerPaths, setWorkers } from "@/util/setWorkers";
 
 const Editor: React.FC<EditorProps> = ({
   language = "thanosql",
@@ -13,14 +14,17 @@ const Editor: React.FC<EditorProps> = ({
   style,
   onStartQuery,
   onStopQuery,
+  workerPaths,
+  options,
   ...props
 }) => {
   let divNode;
   const [editor, setEditor] = useState(null);
-  const effectCalled = React.useRef<boolean>(false);
-  const assignRef = React.useCallback((node) => {
+  const effectCalled = useRef<boolean>(false);
+  const assignRef = useCallback((node) => {
     // On mount get the ref of the div and assign it the divNode
     divNode = node;
+    setWorkers(workerPaths);
   }, []);
   const [loading, setLoading] = useState(true);
 
@@ -34,9 +38,8 @@ const Editor: React.FC<EditorProps> = ({
     });
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (divNode && !effectCalled.current) {
-      effectCalled.current = true;
       setupLanguage();
       const editor = monaco.editor.create(divNode, {
         language: language,
@@ -56,16 +59,21 @@ const Editor: React.FC<EditorProps> = ({
         lineNumbersMinChars: 0,
         detectIndentation: true,
         tabSize: 4,
+        ...options,
       });
       ro.observe(divNode);
       (self as any).editor = editor;
       setEditor(editor);
       setLoading(false);
+      effectCalled.current = true;
     }
   }, [assignRef]);
 
   return (
-    <div id="editor-wrapper">
+    <div
+      className="editor-wrapper"
+      style={{ display: "flex", flexFlow: "column nowrap", height: "100%" }}
+    >
       <EditorLauncher
         editor={editor}
         onStartQuery={onStartQuery}
@@ -83,6 +91,7 @@ const Editor: React.FC<EditorProps> = ({
           borderTop: "1px solid",
           borderBottom: "1px solid",
           borderColor: "#52525226",
+          flex: 2,
           ...style,
         }}
         {...props}
@@ -97,6 +106,8 @@ export interface EditorCustomProps {
   defaultValue?: string;
   width?: string | number;
   height?: string | number;
+  workerPaths: WorkerPaths;
+  options?: monaco.editor.IStandaloneEditorConstructionOptions;
 }
 
 export type EditorProps = EditorCustomProps &

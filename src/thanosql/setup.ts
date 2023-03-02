@@ -63,21 +63,6 @@ export function setupLanguage(monaco: any = monacoEditor) {
     },
   });
 
-  //   monaco.editor.defineTheme('myCustomTheme', {
-  //     base: 'vs', // can also be vs-dark or hc-black
-  //     inherit: true, // can also be false to completely replace the builtin rules
-  //     rules: [
-  //         { token: 'thanosql-keyword', foreground: '#604BCC', fontStyle: 'bold'},
-  //         { token: 'thanosql-operator', foreground: '#B05A9F', fontStyle: 'bold'},
-  //         { token: 'pg-keyword', foreground: '#604BCC'},
-  //         { token: 'pg-operator', foreground: '#B05A9F'},
-  //         {token : 'pg-predefined', foreground: '#42988F'}
-  //     ],
-  //     colors: {
-  //         'editor.foreground': '#000000',
-  //     }
-  // });
-
   // keyword - #604BCC
   // operator - #B05A9F
   // builtin function - #42988F
@@ -96,6 +81,16 @@ export function setupLanguage(monaco: any = monacoEditor) {
       "editor.foreground": "#000000",
       "editor.lineHighlightBackground": "#00000000",
       "editor.lineHighlightBorder": "#00000000",
+    },
+  });
+
+  monaco.languages.setLanguageConfiguration("thanosql", {
+    indentationRules: {
+      // ^(.*\*/)?\s*\}.*$a
+      decreaseIndentPattern: /^((?!.*?\/\*).*\*\/)?\s*[\}\]\)].*$/,
+      // ^.*\([^)"';]*$
+      increaseIndentPattern:
+        /^((?!\/\/).)*(\([^)"'`]*|\([^)"'`]*|\[[^\]"'`]*);$/,
     },
   });
 }

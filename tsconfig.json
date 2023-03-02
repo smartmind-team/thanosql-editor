@@ -6,7 +6,7 @@
     "downlevelIteration": true,
     "noEmitOnError": true,
     "allowJs": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "rootDir": "./src",
     "baseUrl": ".",
     "module": "ESNext",
@@ -18,6 +18,6 @@
     },
     "typeRoots": ["src/type", "node_modules/@types"]
   },
-  "exclude": ["node_modules", "lib"],
+  "exclude": ["node_modules/", "lib/"],
   "include": ["./src/**/*.ts", "./src/**/*.tsx"]
 }

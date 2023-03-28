@@ -1,10 +1,15 @@
-import { useEffect, useState } from "react";
-import { setupLanguage } from "../../lib/esm/thanosql/setup";
-import Editor from "../../lib/esm";
+import Editor from "@smartmind-team/thanosql-editor";
+import { useEditorContext } from "@smartmind-team/thanosql-editor";
 
 function App() {
+  const { isQueryStarting, editor, setQueryStarting } = useEditorContext();
+
   return (
-    <div className="App" style={{ width: "100vw", height: 800 }}>
+    <div
+      className="App"
+      style={{ width: "100vw", height: 800 }}
+      onClick={(e) => {}}
+    >
       <Editor
         language="thanosql"
         workerPaths={{
@@ -18,6 +23,12 @@ function App() {
             base: window.location.href,
             isModule: true,
           },
+        }}
+        onStartQuery={(editor) => {
+          setQueryStarting(true);
+          const queryValue = editor?.getValue();
+          console.log(queryValue);
+          setTimeout(() => setQueryStarting(false), 2000);
         }}
       />
     </div>

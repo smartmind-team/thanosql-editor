@@ -5,6 +5,7 @@ import EditorLauncher, {
   EditorLauncherProps,
 } from "@/components/EditorLauncher";
 import { WorkerPaths, setWorkers } from "@/util/setWorkers";
+import { useEditorContext } from "../EditorProvider";
 
 const Editor: React.FC<EditorProps> = ({
   language = "thanosql",
@@ -12,26 +13,35 @@ const Editor: React.FC<EditorProps> = ({
   width,
   height,
   style,
-  onStartQuery,
-  onStopQuery,
   workerPaths,
   options,
+  onStartQuery,
+  onStopQuery,
   ...props
 }) => {
+  const {
+    editor,
+    currentValue,
+    currentMode,
+    sessionID,
+    isEditorLoading,
+    setEditor,
+    setValue,
+    setMode,
+    setSession,
+    setEditorLoading,
+  } = useEditorContext();
   let divNode;
-  const [editor, setEditor] = useState(null);
   const effectCalled = useRef<boolean>(false);
   const assignRef = useCallback((node) => {
     // On mount get the ref of the div and assign it the divNode
     divNode = node;
-    setWorkers(workerPaths);
   }, []);
-  const [loading, setLoading] = useState(true);
 
   const ro = new ResizeObserver((entries) => {
     entries.forEach((entry) => {
       const { width, height } = entry.contentRect;
-      (window as any).editor?.layout({
+      editor?.layout({
         width,
         height,
       });
@@ -48,7 +58,7 @@ const Editor: React.FC<EditorProps> = ({
         theme: "thanosql-light",
         mouseWheelZoom: true,
         fontSize: 16,
-        value: defaultValue ?? "--thanosql query",
+        value: defaultValue,
         inDiffEditor: false,
         renderLineHighlight: "none",
         lineNumbers: (ln) =>
@@ -62,9 +72,9 @@ const Editor: React.FC<EditorProps> = ({
         ...options,
       });
       ro.observe(divNode);
-      (self as any).editor = editor;
       setEditor(editor);
-      setLoading(false);
+      setEditorLoading(false);
+      setWorkers(workerPaths);
       effectCalled.current = true;
     }
   }, [assignRef]);
@@ -74,13 +84,9 @@ const Editor: React.FC<EditorProps> = ({
       className="editor-wrapper"
       style={{ display: "flex", flexFlow: "column nowrap", height: "100%" }}
     >
-      <EditorLauncher
-        editor={editor}
-        onStartQuery={onStartQuery}
-        onStopQuery={onStopQuery}
-      />
+      <EditorLauncher onStartQuery={onStartQuery} onStopQuery={onStopQuery} />
       <div
-        hidden={!divNode && loading}
+        hidden={!divNode && isEditorLoading}
         ref={assignRef}
         className="editor-container"
         style={{
@@ -96,7 +102,7 @@ const Editor: React.FC<EditorProps> = ({
         }}
         {...props}
       ></div>
-      {loading && "isLoading..."}
+      {isEditorLoading && "isLoading..."}
     </div>
   );
 };
@@ -106,7 +112,7 @@ export interface EditorCustomProps {
   defaultValue?: string;
   width?: string | number;
   height?: string | number;
-  workerPaths: WorkerPaths;
+  workerPaths?: WorkerPaths;
   options?: monaco.editor.IStandaloneEditorConstructionOptions;
 }
 

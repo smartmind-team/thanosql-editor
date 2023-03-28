@@ -12,6 +12,8 @@ const external = [
   "react",
   "react-dom",
   "monaco-editor-core",
+  "antlr4ts",
+  "@emotion/react",
   /\.svg$/,
   /\.css$/,
 ];
@@ -22,6 +24,7 @@ const defaultNodeResolveConfig = {
   browser: true,
   moduleDirectories: ["node_modules"],
   dedeupe: ["antlr4ts", "react", "react-dom", "monaco-editor-core"],
+  resolveOnly: [/antlr4ts/],
   preferBuiltins: false,
 };
 const nodeResolvePlugin = nodeResolve(defaultNodeResolveConfig);
@@ -30,6 +33,14 @@ const commonPlugins = [
   typescript({
     typescript: ttypescript,
     tsconfig: "./tsconfig.json",
+    tsconfigDefaults: {
+      compilerOptions: {
+        plugins: [
+          { transform: "typescript-transform-paths" },
+          { transform: "typescript-transform-paths", afterDeclarations: true },
+        ],
+      },
+    },
   }),
   PeerDepsExternalPlugin(),
   nodeResolvePlugin,
@@ -61,6 +72,7 @@ export default [
       format: "cjs",
       exports: "named",
       preserveModules: true,
+      sourcemap: "inline",
     },
     plugins: [
       ...commonPlugins,
@@ -81,6 +93,7 @@ export default [
       dir: "lib/esm/",
       format: "es",
       preserveModules: true,
+      sourcemap: "inline",
     },
     plugins: [
       ...commonPlugins,

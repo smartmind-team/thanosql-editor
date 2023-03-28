@@ -1,5 +1,3 @@
-declare module "monaco-editor-core/esm/vs/editor/editor.worker";
-
 declare module "*.svg" {
   import * as React from "react";
 

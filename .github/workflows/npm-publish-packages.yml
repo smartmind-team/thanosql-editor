@@ -68,7 +68,7 @@ jobs:
       - name: Bump pre-release version
         if: startsWith(github.event.inputs.release-type, 'pre')
         run: |
-          echo "NEW_VERSION=$(npm --no-git-tag-version version --new-version $RELEASE_TYPE --preid $PRE_RELEASE_TYPE | grep "New version:" | grep -oe "[0-9].*")" >> $GITHUB_ENV
+          echo "NEW_VERSION=$(npm --no-git-tag-version version --new-version $RELEASE_TYPE --preid $PRE_RELEASE_TYPE | grep -oe "[0-9].*")" >> $GITHUB_ENV
           echo "RELEASE_TAG=$PRE_RELEASE_TYPE" >> $GITHUB_ENV
           echo ${{ env.NEW_VERSION }}
         env:

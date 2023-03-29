@@ -38,16 +38,6 @@ const Editor: React.FC<EditorProps> = ({
     divNode = node;
   }, []);
 
-  const ro = new ResizeObserver((entries) => {
-    entries.forEach((entry) => {
-      const { width, height } = entry.contentRect;
-      editor?.layout({
-        width,
-        height,
-      });
-    });
-  });
-
   useEffect(() => {
     if (divNode && !effectCalled.current) {
       setupLanguage();
@@ -71,7 +61,19 @@ const Editor: React.FC<EditorProps> = ({
         tabSize: 4,
         ...options,
       });
+
+      // ResizeObserver for auto resize monaco editor
+      const ro = new ResizeObserver((entries) => {
+        entries.forEach((entry) => {
+          const { width, height } = entry.contentRect;
+          editor.layout({
+            width,
+            height,
+          });
+        });
+      });
       ro.observe(divNode);
+
       setEditor(editor);
       setEditorLoading(false);
       setWorkers(workerPaths);

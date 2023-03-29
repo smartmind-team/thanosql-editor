@@ -7,30 +7,37 @@ function App() {
   return (
     <div
       className="App"
-      style={{ width: "100vw", height: 800 }}
-      onClick={(e) => {}}
+      style={{
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        flexFlow: "column nowrap",
+      }}
     >
-      <Editor
-        language="thanosql"
-        workerPaths={{
-          default: {
-            url: "../node_modules/monaco-editor-core/esm/vs/editor/editor.worker.js",
-            base: window.location.href,
-            isModule: true,
-          },
-          thanosql: {
-            url: "../node_modules/@smartmind-team/thanosql-editor/lib/esm/thanosql/thanos.worker.js",
-            base: window.location.href,
-            isModule: true,
-          },
-        }}
-        onStartQuery={(editor) => {
-          setQueryStarting(true);
-          const queryValue = editor?.getValue();
-          console.log(queryValue);
-          setTimeout(() => setQueryStarting(false), 2000);
-        }}
-      />
+      <div style={{ fontSize: "1rem", fontWeight: 900 }}>Editor Example</div>
+      <div style={{ flex: 2 }}>
+        <Editor
+          language="thanosql"
+          workerPaths={{
+            default: {
+              url: "../node_modules/monaco-editor-core/esm/vs/editor/editor.worker.js",
+              base: window.location.href,
+              isModule: true,
+            },
+            thanosql: {
+              url: "../node_modules/@smartmind-team/thanosql-editor/lib/esm/thanosql/thanos.worker.js",
+              base: window.location.href,
+              isModule: true,
+            },
+          }}
+          onStartQuery={(editor) => {
+            setQueryStarting(true);
+            const queryValue = editor?.getValue();
+            console.log(queryValue);
+            setTimeout(() => setQueryStarting(false), 2000);
+          }}
+        />
+      </div>
     </div>
   );
 }

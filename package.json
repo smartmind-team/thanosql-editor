@@ -1,6 +1,6 @@
 {
   "name": "@smartmind-team/thanosql-editor",
-  "version": "1.0.7-alpha.0",
+  "version": "1.0.7-alpha.1",
   "description": "",
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",

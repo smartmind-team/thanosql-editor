@@ -1,6 +1,6 @@
 parser grammar thanosParser;
 options {
-    language=Python3;
+    language=JavaScript;
     tokenVocab=thanosLexer;
 }
 

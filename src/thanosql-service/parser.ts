@@ -1,6 +1,6 @@
-import { thanosParser, ThanosLanguageContext } from "@/ANTLR/thanosParser";
-import { thanosLexer } from "@/ANTLR/thanosLexer";
-import { CharStreams, CommonTokenStream } from "antlr4ts";
+import thanosParser, { ThanosLanguageContext } from "@/ANTLR/thanosParser";
+import thanosLexer from "@/ANTLR/thanosLexer";
+import { CharStreams, CommonTokenStream } from "antlr4";
 import ThanosErrorListener, { IThanosError } from "./ThanosErrorListener";
 
 export default function parse(code: string): {

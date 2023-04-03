@@ -1,6 +1,6 @@
 lexer grammar thanosLexer;
 options {
-    language=Python3;
+    language=JavaScript;
 }
 
 //#############################//

@@ -1,4 +1,4 @@
-import { ANTLRErrorListener, RecognitionException, Recognizer } from "antlr4ts";
+import { ErrorListener, RecognitionException, Recognizer } from "antlr4";
 
 export interface IThanosError {
   startLineNumber: number;
@@ -9,10 +9,10 @@ export interface IThanosError {
   code: string;
 }
 
-export default class ThanosErrorListener implements ANTLRErrorListener<any> {
+export default class ThanosErrorListener implements ErrorListener<any> {
   private errors: IThanosError[] = [];
   syntaxError(
-    recognizer: Recognizer<any, any>,
+    recognizer: Recognizer<any>,
     offendingSymbol: any,
     line: number,
     charPositionInLine: number,

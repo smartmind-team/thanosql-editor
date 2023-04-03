@@ -12,7 +12,6 @@ const external = [
   "react",
   "react-dom",
   "monaco-editor-core",
-  "antlr4ts",
   "@emotion/react",
   /\.svg$/,
   /\.css$/,
@@ -23,7 +22,7 @@ const defaultNodeResolveConfig = {
   extensions,
   browser: true,
   moduleDirectories: ["node_modules"],
-  dedeupe: ["antlr4ts", "react", "react-dom", "monaco-editor-core"],
+  dedeupe: ["antlr4", "react", "react-dom", "monaco-editor-core"],
   resolveOnly: [/antlr4ts/],
   preferBuiltins: false,
 };

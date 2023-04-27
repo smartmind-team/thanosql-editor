@@ -72,6 +72,9 @@ const Editor: React.FC<EditorProps> = ({
         keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
         run: function() {
           var val = model.getValueInRange(editor.getSelection());
+          if (val == "") {
+            val = model.getValue()
+          }
           var elem = document.createElement("div");
           var selectedEditor = monaco.editor.create(elem, {value: val});
           onStartQuery && onStartQuery(selectedEditor);

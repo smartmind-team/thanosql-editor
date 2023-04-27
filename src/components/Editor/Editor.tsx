@@ -41,7 +41,7 @@ const Editor: React.FC<EditorProps> = ({
   useEffect(() => {
     if (divNode && !effectCalled.current) {
       setupLanguage();
-      const editor = monaco.editor.create(divNode, {
+      var editor = monaco.editor.create(divNode, {
         language: language,
         minimap: { enabled: false },
         autoIndent: "full",
@@ -61,6 +61,24 @@ const Editor: React.FC<EditorProps> = ({
         tabSize: 4,
         ...options,
       });
+
+      var model = editor.getModel();
+
+      var executeAction = {
+        id: "execute-selected-code",
+        label: "Execute selected code",
+        contextMenuOrder: 2,
+        contextMenuGroupId: "1_modification",
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
+        run: function() {
+          var val = model.getValueInRange(editor.getSelection());
+          var elem = document.createElement("div");
+          var selectedEditor = monaco.editor.create(elem, {value: val});
+          onStartQuery && onStartQuery(selectedEditor);
+        },
+      }
+    
+      editor.addAction(executeAction)
 
       // ResizeObserver for auto resize monaco editor
       const ro = new ResizeObserver((entries) => {

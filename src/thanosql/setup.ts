@@ -84,7 +84,26 @@ export function setupLanguage(monaco: any = monacoEditor) {
     },
   });
 
+  monaco.editor.addKeybindingRules([
+    {
+      keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.Minus,
+      command: 'editor.action.fontZoomOut',
+    },
+    {
+      keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.Equal,
+      command: 'editor.action.fontZoomIn',
+    },
+    {
+      keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.Digit0,
+      command: 'editor.action.fontZoomReset',
+    },
+  ]);
+
   monaco.languages.setLanguageConfiguration("thanosql", {
+    comments: {
+    lineComment: '--',
+    blockComment: ["/*", "*/"]
+    },
     indentationRules: {
       // ^(.*\*/)?\s*\}.*$a
       decreaseIndentPattern: /^((?!.*?\/\*).*\*\/)?\s*[\}\]\)].*$/,

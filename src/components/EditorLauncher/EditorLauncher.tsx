@@ -50,11 +50,11 @@ const EditorLauncherStyle = css`
   gap: 2rem;
 `;
 export interface EditorLauncherProps extends HTMLAttributes<HTMLDivElement> {
-  onStartQuery?: EditorLauncherEventHanlder;
-  onStopQuery?: EditorLauncherEventHanlder;
+  onStartQuery?: EditorLauncherEventHandler;
+  onStopQuery?: EditorLauncherEventHandler;
 }
 
-export type EditorLauncherEventHanlder = {
+export type EditorLauncherEventHandler = {
   method(editor?: monaco.editor.IStandaloneCodeEditor): void;
 }["method"];
 

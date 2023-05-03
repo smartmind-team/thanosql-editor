@@ -41,7 +41,7 @@ const Editor: React.FC<EditorProps> = ({
   useEffect(() => {
     if (divNode && !effectCalled.current) {
       setupLanguage();
-      var editor = monaco.editor.create(divNode, {
+      const editor = monaco.editor.create(divNode, {
         language: language,
         minimap: { enabled: false },
         autoIndent: "full",
@@ -62,24 +62,22 @@ const Editor: React.FC<EditorProps> = ({
         ...options,
       });
 
-      var model = editor.getModel();
+      const model = editor.getModel();
 
-      var executeAction = {
-        id: "execute-selected-code",
+      const executeAction: monaco.editor.IActionDescriptor = {
+        id: "executeSelectedCode",
         label: "Execute selected code",
         contextMenuOrder: 2,
         contextMenuGroupId: "1_modification",
         keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-        run: function() {
+        run: (editor) => {
           // by default, only run selected value
-          var val = model.getValueInRange(editor.getSelection());
+          let selectedValue = model.getValueInRange(editor.getSelection());
           // however, if nothing is selected, we run all editor value
-          if (val == "") {
-            val = model.getValue();
+          if (selectedValue === "") {
+            selectedValue = model.getValue();
           }
-          var elem = document.createElement("div");
-          var selectedEditor = monaco.editor.create(elem, {value: val});
-          onStartQuery && onStartQuery(selectedEditor);
+          onStartQuery && onStartQuery(editor, targetValue);
         },
       }
     

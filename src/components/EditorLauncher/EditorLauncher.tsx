@@ -55,7 +55,7 @@ export interface EditorLauncherProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export type EditorLauncherEventHandler = {
-  method(editor?: monaco.editor.IStandaloneCodeEditor): void;
+  method(editor?: monaco.editor.IStandaloneCodeEditor, targetValue?: string): void;
 }["method"];
 
 export default EditorLauncher;

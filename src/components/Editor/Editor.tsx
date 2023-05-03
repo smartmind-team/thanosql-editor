@@ -70,14 +70,16 @@ const Editor: React.FC<EditorProps> = ({
         contextMenuOrder: 2,
         contextMenuGroupId: "1_modification",
         keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-        run: (editor) => {
+        run: () => {
           // by default, only run selected value
           let selectedValue = model.getValueInRange(editor.getSelection());
           // however, if nothing is selected, we run all editor value
           if (selectedValue === "") {
             selectedValue = model.getValue();
           }
-          onStartQuery && onStartQuery(editor, targetValue);
+          let selectedElem = document.createElement("div");
+          let selectedEditor = monaco.editor.create(selectedElem, {value: selectedValue});
+          onStartQuery && onStartQuery(selectedEditor);
         },
       }
     

@@ -33,8 +33,7 @@ const EditorLauncher = ({
           onClick={() =>
             !isQueryStarting &&
             !isQueryStopping &&
-            onStartQuery &&
-            onStartQuery(editor)
+            editor.trigger('', 'executeSelectedCode', '')
           }
         />
       )}

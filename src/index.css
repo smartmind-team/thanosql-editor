@@ -1,5 +1,6 @@
 .monaco-scrollable-element {
   border-left: 1px solid #52525226;
+  margin-left: -8px;
 }
 
 /* padding between the gutter and code */

@@ -1,98 +1,112 @@
-import * as monaco from "monaco-editor-core";
-import {
-  createContext,
-  useContext,
-  ReactNode,
-  useState,
-  Dispatch,
-  SetStateAction,
-} from "react";
+import * as monaco from 'monaco-editor-core';
+import { createContext, useContext, ReactNode, useState, Dispatch, SetStateAction } from 'react';
 
 const EditorContext = createContext<EditorContextState | null>(null);
 
 export const useEditorContext = () => {
   const {
     editor,
-    currentValue,
-    currentMode,
     sessionID,
+    store,
     isQueryStarting,
     isQueryStopping,
     isEditorLoading,
+    createTabSession,
+    changeTabSession,
+    removeTabSession,
     setEditor,
-    setValue,
-    setMode,
-    setSession,
-    setQueryStarting,
-    setQueryStopping,
-    setEditorLoading,
+    setSessionID,
+    setIsQueryStarting,
+    setIsQueryStopping,
+    setIsEditorLoading,
   } = useContext(EditorContext) ?? {};
   return {
     editor,
-    currentValue,
-    currentMode,
     sessionID,
+    store,
     isQueryStarting,
     isQueryStopping,
     isEditorLoading,
+    createTabSession,
+    changeTabSession,
+    removeTabSession,
     setEditor,
-    setValue,
-    setMode,
-    setSession,
-    setQueryStarting,
-    setQueryStopping,
-    setEditorLoading,
+    setSessionID,
+    setIsQueryStarting,
+    setIsQueryStopping,
+    setIsEditorLoading,
   };
 };
 
-const EditorProvider: React.FC<EditorProviderProps> = ({
-  children,
-  defaultState,
-}) => {
+const EditorProvider: React.FC<EditorProviderProps> = ({ children, defaultState }) => {
   const {
     editor: defaultEditor,
-    currentValue: defaultValue,
-    currentMode: defaultMode,
     sessionID: defaultSessionID,
+    store = new Map<string, (EditorDefaultStore & Record<string, unknown>) | undefined>(),
     isQueryStarting: defaultIsQueryStarting,
     isQueryStopping: defaultIsQueryStopping,
     isEditorLoading: defaultIsEditorLoading,
   } = defaultState ?? {};
-  const [editor, setEditor] = useState<EditorContextState["editor"]>(
-    defaultEditor ?? null
-  );
-  const [currentValue, setCurrentValue] = useState(defaultValue ?? "");
-  const [currentMode, setCurrentMode] = useState(defaultMode ?? "");
-  const [sessionID, setSessionID] = useState(defaultSessionID ?? "");
-  const [isQueryStarting, setIsQueryStarting] = useState(
-    defaultIsQueryStarting ?? false
-  );
-  const [isQueryStopping, setIsQueryStopping] = useState(
-    defaultIsQueryStopping ?? false
-  );
-  const [isEditorLoading, setIsEditorLoading] = useState(
-    defaultIsEditorLoading ?? false
-  );
+  const [editor, setEditor] = useState(defaultEditor ?? null);
+  const [sessionID, setSessionID] = useState(defaultSessionID ?? '');
+  const [isQueryStarting, setIsQueryStarting] = useState(defaultIsQueryStarting ?? false);
+  const [isQueryStopping, setIsQueryStopping] = useState(defaultIsQueryStopping ?? false);
+  const [isEditorLoading, setIsEditorLoading] = useState(defaultIsEditorLoading ?? false);
+
+  const createTabSession: EditorContextState['createTabSession'] = (sessionID, createType = 'default') => {
+    if (!store.has(sessionID)) {
+      let model = null;
+      switch (createType) {
+        case 'initialize':
+          model = editor.getModel();
+          break;
+        case 'copy':
+          model = monaco.editor.createModel(editor.getValue(), editor.getModel().getLanguageId());
+          break;
+        default:
+          model = monaco.editor.createModel('', 'thanosql');
+          break;
+      }
+      store.set(sessionID, { model, state: null });
+    }
+    return store.get(sessionID);
+  };
+
+  const changeTabSession: EditorContextState['changeTabSession'] = (currentTabSessionID, desiredTabSessionID) => {
+    const currentState = editor.saveViewState();
+    if (store.has(currentTabSessionID)) store.set(currentTabSessionID, { ...store.get(currentTabSessionID), state: currentState });
+
+    // If the desired TabSessionID does not exist, create new one.
+    if (!store.has(desiredTabSessionID)) createTabSession(desiredTabSessionID);
+    const { model, state } = store.get(desiredTabSessionID);
+    editor.setModel(model);
+    editor.restoreViewState(state);
+    editor.focus();
+  };
+
+  const removeTabSession: EditorContextState['removeTabSession'] = sessionID => {
+    store.delete(sessionID);
+    return store.has(sessionID);
+  };
 
   return (
     <EditorContext.Provider
       value={{
         editor,
-        currentValue,
-        currentMode,
         sessionID,
+        store,
         isQueryStarting,
         isQueryStopping,
         isEditorLoading,
+        createTabSession,
+        changeTabSession,
+        removeTabSession,
         setEditor,
-        setValue: setCurrentValue,
-        setMode: setCurrentMode,
-        setSession: setSessionID,
-        setQueryStarting: setIsQueryStarting,
-        setQueryStopping: setIsQueryStopping,
-        setEditorLoading: setIsEditorLoading,
-      }}
-    >
+        setSessionID,
+        setIsQueryStarting,
+        setIsQueryStopping,
+        setIsEditorLoading,
+      }}>
       {children}
     </EditorContext.Provider>
   );
@@ -100,24 +114,32 @@ const EditorProvider: React.FC<EditorProviderProps> = ({
 
 export interface EditorContextState {
   editor: monaco.editor.IStandaloneCodeEditor;
-  currentValue: string;
-  currentMode: string; // current language model
-  sessionID: string; // Editor Session ID
+  // current editor tab session ID
+  sessionID: string;
+  // storage for session's model, state, and something...
+  store: Map<string, (EditorDefaultStore & Record<string, unknown>) | undefined>;
   isQueryStarting?: boolean;
   isQueryStopping?: boolean;
   isEditorLoading?: boolean;
+  createTabSession: (sessionID: string, createType?: CreateType) => EditorDefaultStore | void;
+  changeTabSession: (currentTabSessionID: string, desiredTabSessionID: string) => void;
+  removeTabSession: (sessionID: string) => boolean;
   setEditor?: Dispatch<SetStateAction<monaco.editor.IStandaloneCodeEditor>>;
-  setValue?: Dispatch<SetStateAction<string>>;
-  setMode?: Dispatch<SetStateAction<string>>;
-  setSession?: Dispatch<SetStateAction<string>>;
-  setQueryStarting?: Dispatch<SetStateAction<boolean>>;
-  setQueryStopping?: Dispatch<SetStateAction<boolean>>;
-  setEditorLoading?: Dispatch<SetStateAction<boolean>>;
+  setSessionID?: Dispatch<SetStateAction<string>>;
+  setIsQueryStarting?: Dispatch<SetStateAction<boolean>>;
+  setIsQueryStopping?: Dispatch<SetStateAction<boolean>>;
+  setIsEditorLoading?: Dispatch<SetStateAction<boolean>>;
 }
 
+export type CreateType = 'copy' | 'initialize' | 'default';
 export interface EditorProviderProps {
   defaultState?: EditorContextState;
   children?: ReactNode;
+}
+
+export interface EditorDefaultStore {
+  model: monaco.editor.ITextModel;
+  state: monaco.editor.ICodeEditorViewState;
 }
 
 export default EditorProvider;

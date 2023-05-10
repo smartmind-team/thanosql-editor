@@ -1,8 +1,9 @@
-import { memo } from "react";
-import EditorProvider from "./EditorProvider";
-import { useEditorContext } from "./EditorProvider";
-import type { EditorProviderProps, EditorContextState } from "./EditorProvider";
+import { memo } from 'react';
+import EditorProvider from './EditorProvider';
+import EditorStore from './EditorStore';
+import type { EditorProviderProps, EditorContextState } from './EditorProvider';
+import type { EditorDefaultStore } from './EditorStore';
 
-export { useEditorContext, EditorProviderProps, EditorContextState };
-
+export { useEditorContext } from './EditorProvider';
+export { EditorProviderProps, EditorContextState, EditorDefaultStore, EditorStore };
 export default memo<EditorProviderProps>(EditorProvider);

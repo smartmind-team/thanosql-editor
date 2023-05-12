@@ -34,7 +34,6 @@ const Editor: React.FC<EditorProps> = ({
 
       // if current SessionID has previous store(model);
       const model = createTabSession(sessionID, { language }).model;
-      console.log('useeffect in Editor', getSessionState());
 
       // create monaco-editor instance
       const editor = monaco.editor.create(divNode, {

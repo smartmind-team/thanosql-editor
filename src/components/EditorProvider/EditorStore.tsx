@@ -2,7 +2,7 @@ import * as monaco from 'monaco-editor-core';
 import { v4 } from 'uuid';
 
 class EditorStore {
-  sessionID;
+  sessionID: string;
   editor: monaco.editor.IStandaloneCodeEditor;
   #store: Map<string, EditorDefaultStore & Record<string, unknown>>;
 

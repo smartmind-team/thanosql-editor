@@ -1,19 +1,19 @@
-import { useEditorContext } from '@smartmind-team/thanosql-editor';
-import { ComponentProps } from 'react';
-import { atom, useRecoilState, selector } from 'recoil';
-import { v4 } from 'uuid';
-import { defaultTab } from './assets/config';
+import { useEditorContext } from "@smartmind-team/thanosql-editor";
+import { ComponentProps } from "react";
+import { atom, useRecoilState, selector } from "recoil";
+import { v4 } from "uuid";
+import { defaultTab } from "./assets/config";
 
 export const Tab = ({ name, active, children, ...props }: TabProps) => {
   return (
-    <li style={{ listStyle: 'none', cursor: 'pointer', padding: 0, color: active ? '#535bf2' : 'inherit' }} {...props}>
+    <li style={{ listStyle: "none", cursor: "pointer", padding: 0, color: active ? "#535bf2" : "inherit" }} {...props}>
       {children}
     </li>
   );
 };
 
-export const TabContainer = ({ children }: ComponentProps<'ul'>) => {
-  return <ul style={{ display: 'flex', gap: '1rem', margin: 0, padding: 0 }}>{children}</ul>;
+export const TabContainer = ({ children }: ComponentProps<"ul">) => {
+  return <ul style={{ display: "flex", gap: "1rem", margin: 0, padding: 0 }}>{children}</ul>;
 };
 
 export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemoveAll: () => void }) => {
@@ -23,7 +23,7 @@ export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemove
   const { changeTabSession, removeTabSession, getSessionState, store } = useEditorContext();
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem 0.5rem' }}>
+    <div style={{ display: "flex", justifyContent: "space-between", padding: "1rem 0.5rem" }}>
       <TabContainer>
         {TabList?.map(({ id, name }, idx) => (
           <Tab
@@ -37,7 +37,7 @@ export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemove
             }}>
             {name}
             <a
-              style={{ padding: '0rem 0.25rem' }}
+              style={{ padding: "0rem 0.25rem" }}
               onClick={e => {
                 if (TabList.length === 1) return onRemoveAll();
                 e.preventDefault();
@@ -61,7 +61,7 @@ export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemove
       </TabContainer>
       <button
         onClick={() => {
-          const newTab = { id: v4(), name: 'tab' + (TabList?.length + 1) };
+          const newTab = { id: v4(), name: "tab" + (TabList?.length + 1) };
           setTabList([...TabList, newTab]);
           changeTabSession(newTab.id);
           setActiveIndex(TabList.length);
@@ -72,27 +72,27 @@ export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemove
   );
 };
 
-interface TabProps extends ComponentProps<'li'> {
+interface TabProps extends ComponentProps<"li"> {
   id: string;
   name?: string;
   active?: boolean;
 }
 
-interface TabNavProps extends ComponentProps<'div'> {
-  defaultTabList?: Pick<TabProps, 'id' | 'name'>[];
+interface TabNavProps extends ComponentProps<"div"> {
+  defaultTabList?: Pick<TabProps, "id" | "name">[];
 }
 
 export const TabListAtom = atom({
-  key: 'tablist',
+  key: "tablist",
   default: [defaultTab],
 });
 
 export const TabActiveIndex = atom({
-  key: 'tab/activeIndex',
+  key: "tab/activeIndex",
   default: 0,
 });
 
 export const ActiveTab = selector({
-  key: 'activeTab',
+  key: "activeTab",
   get: ({ get }) => get(TabListAtom)?.[get(TabActiveIndex)],
 });

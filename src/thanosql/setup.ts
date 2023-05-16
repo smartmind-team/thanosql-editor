@@ -1,9 +1,5 @@
 import * as monacoEditor from "monaco-editor-core";
-import {
-  languageExtensionPoint,
-  languageID,
-  monarchLanguage,
-} from "@/thanosql/config";
+import { languageExtensionPoint, languageID, monarchLanguage } from "@/thanosql/config";
 import CompletionItemKind = monacoEditor.languages.CompletionItemKind;
 import { WorkerManager } from "@/thanosql/WorkerManager";
 import { ThanosWorker } from "@/thanosql/ThanosWorker";
@@ -15,9 +11,7 @@ export function setupLanguage(monaco: any = monacoEditor) {
   monaco.languages.onLanguage(languageID, () => {
     monaco.languages.setMonarchTokensProvider(languageID, monarchLanguage);
     const client = new WorkerManager();
-    const worker: WorkerAccessor = (
-      ...uris: monacoEditor.Uri[]
-    ): Promise<ThanosWorker> => {
+    const worker: WorkerAccessor = (...uris: monacoEditor.Uri[]): Promise<ThanosWorker> => {
       return client.getLanguageServiceWorker(...uris);
     };
     //Call the errors provider
@@ -89,12 +83,9 @@ export function setupLanguage(monaco: any = monacoEditor) {
       // ^(.*\*/)?\s*\}.*$a
       decreaseIndentPattern: /^((?!.*?\/\*).*\*\/)?\s*[\}\]\)].*$/,
       // ^.*\([^)"';]*$
-      increaseIndentPattern:
-        /^((?!\/\/).)*(\([^)"'`]*|\([^)"'`]*|\[[^\]"'`]*);$/,
+      increaseIndentPattern: /^((?!\/\/).)*(\([^)"'`]*|\([^)"'`]*|\[[^\]"'`]*);$/,
     },
   });
 }
 
-export type WorkerAccessor = (
-  ...uris: monacoEditor.Uri[]
-) => Promise<ThanosWorker>;
+export type WorkerAccessor = (...uris: monacoEditor.Uri[]) => Promise<ThanosWorker>;

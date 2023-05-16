@@ -40,33 +40,33 @@ It serves esm as well as cjs, and this component is available in both module env
 
 ```ts
 // App.tsx
-import Editor from '@smartmind-team/thanosql-editor';
-import { useEditorContext } from '@smartmind-team/thanosql-editor';
+import Editor from "@smartmind-team/thanosql-editor";
+import { useEditorContext } from "@smartmind-team/thanosql-editor";
 
 function App() {
   const { isQueryStarting, editor, setQueryStarting } = useEditorContext();
 
   return (
     <div
-      className='App'
+      className="App"
       style={{
-        width: '100vw',
-        height: '100vh',
-        display: 'flex',
-        flexFlow: 'column nowrap',
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        flexFlow: "column nowrap",
       }}>
-      <div style={{ fontSize: '1rem', fontWeight: 900 }}>Editor Example</div>
+      <div style={{ fontSize: "1rem", fontWeight: 900 }}>Editor Example</div>
       <div style={{ flex: 2 }}>
         <Editor
-          language='thanosql'
+          language="thanosql"
           workerPaths={{
             default: {
-              url: '../node_modules/monaco-editor-core/esm/vs/editor/editor.worker.js',
+              url: "../node_modules/monaco-editor-core/esm/vs/editor/editor.worker.js",
               base: window.location.href,
               isModule: true,
             },
             thanosql: {
-              url: '../node_modules/@smartmind-team/thanosql-editor/lib/esm/thanosql/thanos.worker.js',
+              url: "../node_modules/@smartmind-team/thanosql-editor/lib/esm/thanosql/thanos.worker.js",
               base: window.location.href,
               isModule: true,
             },
@@ -88,18 +88,18 @@ export default App;
 
 ```ts
 // main.tsx
-import { StrictMode } from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './index.css';
-import { EditorProvider, EditorStore } from '@smartmind-team/thanosql-editor';
+import { StrictMode } from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import "./index.css";
+import { EditorProvider, EditorStore } from "@smartmind-team/thanosql-editor";
 
 const EditorStoreClient = new EditorStore();
 
 // To set a custom default session ID, create your own session ID and send it to the EditorProvider's props.
-const DefaultSessionID = 'yourCustomSessionID';
+const DefaultSessionID = "yourCustomSessionID";
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <EditorProvider store={EditorStoreClient} sessionID={DefaultSessionID}>
       <App />

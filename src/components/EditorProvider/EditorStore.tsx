@@ -1,5 +1,5 @@
-import * as monaco from 'monaco-editor-core';
-import { v4 } from 'uuid';
+import * as monaco from "monaco-editor-core";
+import { v4 } from "uuid";
 
 class EditorStore {
   sessionID: string;
@@ -26,7 +26,7 @@ class EditorStore {
 
   createTabSession = (sessionID: string, options?: { value?: string; language?: string }) => {
     if (!this.#store.has(sessionID)) {
-      const model = monaco.editor.createModel(options?.value ?? '', options?.language ?? 'thanosql');
+      const model = monaco.editor.createModel(options?.value ?? "", options?.language ?? "thanosql");
       this.#store.set(sessionID, { model, state: null });
     }
     return this.#store.get(sessionID);

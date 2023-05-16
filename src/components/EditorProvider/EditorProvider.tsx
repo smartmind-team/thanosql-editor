@@ -1,5 +1,5 @@
-import { createContext, useContext, ReactNode, useState, Dispatch, SetStateAction, useEffect } from 'react';
-import EditorStore from './EditorStore';
+import { createContext, useContext, ReactNode, useState, Dispatch, SetStateAction, useEffect } from "react";
+import EditorStore from "./EditorStore";
 
 const EditorContext = createContext<EditorContextState | null>(null);
 
@@ -79,7 +79,7 @@ const EditorProvider: React.FC<EditorProviderProps> = ({ children, defaultState,
   );
 };
 
-export interface EditorContextState extends Omit<InstanceType<typeof EditorStore>, '#store'> {
+export interface EditorContextState extends Omit<InstanceType<typeof EditorStore>, "#store"> {
   store: EditorStore;
   // storage for session's model, state, and something...
   isQueryStarting?: boolean;
@@ -92,7 +92,7 @@ export interface EditorContextState extends Omit<InstanceType<typeof EditorStore
 
 export interface EditorProviderProps {
   store: EditorStore;
-  defaultState?: Partial<Omit<EditorContextState, 'editor'>>;
+  defaultState?: Partial<Omit<EditorContextState, "editor">>;
   children?: ReactNode;
 }
 

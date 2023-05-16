@@ -24,9 +24,7 @@ export class WorkerManager {
         },
       });
 
-      this.workerClientProxy = <Promise<ThanosWorker>>(
-        (<any>this.worker.getProxy())
-      );
+      this.workerClientProxy = <Promise<ThanosWorker>>(<any>this.worker.getProxy());
     }
 
     return this.workerClientProxy;

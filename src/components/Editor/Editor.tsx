@@ -55,27 +55,6 @@ const Editor: React.FC<EditorProps> = ({
         ...options,
       });
 
-      const executeAction: monaco.editor.IActionDescriptor = {
-        id: "executeSelectedCode",
-        label: "Execute selected code",
-        contextMenuOrder: 2,
-        contextMenuGroupId: "1_modification",
-        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-        run: () => {
-          // by default, only run selected value
-          let selectedValue = model.getValueInRange(editor.getSelection());
-          // however, if nothing is selected, we run all editor value
-          if (selectedValue === "") {
-            selectedValue = model.getValue();
-          }
-          let selectedElem = document.createElement("div");
-          let selectedEditor = monaco.editor.create(selectedElem, { value: selectedValue });
-          onStartQuery && onStartQuery(selectedEditor);
-        },
-      };
-
-      editor.addAction(executeAction);
-
       // ResizeObserver for auto resize monaco editor
       const ro = new ResizeObserver(entries => {
         entries.forEach(entry => {
@@ -105,7 +84,7 @@ const Editor: React.FC<EditorProps> = ({
 
   return (
     <div className="editor-wrapper" style={{ display: "flex", flexFlow: "column nowrap", height: "100%" }}>
-      <EditorLauncher onStartQuery={onStartQuery} onStopQuery={onStopQuery} />
+      {editor && <EditorLauncher onStartQuery={onStartQuery} onStopQuery={onStopQuery} />}
       <div
         hidden={!divNode && isEditorLoading}
         ref={assignRef}

@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
-import { HTMLAttributes } from 'react';
-import { StartIcon, StopIcon } from '../Icons';
-import * as monaco from 'monaco-editor-core';
-import { useEditorContext } from '../EditorProvider';
-import LoadingSpinner from '../LoadingSpinner';
+import { css } from "@emotion/react";
+import { HTMLAttributes } from "react";
+import { StartIcon, StopIcon } from "../Icons";
+import * as monaco from "monaco-editor-core";
+import { useEditorContext } from "../EditorProvider";
+import LoadingSpinner from "../LoadingSpinner";
 
 const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherProps) => {
   const { editor, isQueryStarting, isQueryStopping } = useEditorContext();
@@ -34,6 +34,6 @@ export interface EditorLauncherProps extends HTMLAttributes<HTMLDivElement> {
 
 export type EditorLauncherEventHanlder = {
   method(editor?: monaco.editor.IStandaloneCodeEditor): void;
-}['method'];
+}["method"];
 
 export default EditorLauncher;

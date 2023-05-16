@@ -8,14 +8,7 @@ import nodePolyfills from "rollup-plugin-node-polyfills";
 import copy from "rollup-plugin-copy";
 import css from "rollup-plugin-import-css";
 
-const external = [
-  "react",
-  "react-dom",
-  "monaco-editor-core",
-  "@emotion/react",
-  /\.svg$/,
-  /\.css$/,
-];
+const external = ["react", "react-dom", "monaco-editor-core", "@emotion/react", /\.svg$/, /\.css$/];
 const extensions = [".js", ".jsx", ".ts", ".tsx", ".svg", ".css"];
 const defaultNodeResolveConfig = {
   exportsCondition: ["node"],
@@ -34,10 +27,7 @@ const commonPlugins = [
     tsconfig: "./tsconfig.json",
     tsconfigDefaults: {
       compilerOptions: {
-        plugins: [
-          { transform: "typescript-transform-paths" },
-          { transform: "typescript-transform-paths", afterDeclarations: true },
-        ],
+        plugins: [{ transform: "typescript-transform-paths" }, { transform: "typescript-transform-paths", afterDeclarations: true }],
       },
     },
   }),

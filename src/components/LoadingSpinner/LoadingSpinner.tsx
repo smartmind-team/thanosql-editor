@@ -2,7 +2,7 @@
 import { css, keyframes } from "@emotion/react";
 import { HTMLAttributes } from "react";
 
-const LoadingSpinner: React.FC<HTMLAttributes<HTMLSpanElement>> = (props) => {
+const LoadingSpinner: React.FC<HTMLAttributes<HTMLSpanElement>> = props => {
   return <span className="loader" css={loaderStyle} {...props}></span>;
 };
 
@@ -21,11 +21,7 @@ const loaderStyle = css`
   height: 1rem;
   border: 1px solid transparent;
   background: #7170dd40;
-  background-image: conic-gradient(
-    #7170dd,
-    rgba(113, 112, 221, 0.00520833),
-    rgba(113, 112, 221, 0)
-  );
+  background-image: conic-gradient(#7170dd, rgba(113, 112, 221, 0.00520833), rgba(113, 112, 221, 0));
   border-radius: 50%;
   background-origin: border-box;
   background-clip: content-box, border-box;

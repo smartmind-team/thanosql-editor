@@ -1,122 +1,98 @@
-import * as monaco from "monaco-editor-core";
-import {
-  createContext,
-  useContext,
-  ReactNode,
-  useState,
-  Dispatch,
-  SetStateAction,
-} from "react";
+import { createContext, useContext, ReactNode, useState, Dispatch, SetStateAction, useEffect } from "react";
+import EditorStore from "./EditorStore";
 
 const EditorContext = createContext<EditorContextState | null>(null);
 
 export const useEditorContext = () => {
   const {
+    store,
     editor,
-    currentValue,
-    currentMode,
     sessionID,
     isQueryStarting,
     isQueryStopping,
     isEditorLoading,
+    setSessionID,
+    getSessionState,
+    createTabSession,
+    changeTabSession,
+    removeTabSession,
+    saveTabSession,
     setEditor,
-    setValue,
-    setMode,
-    setSession,
-    setQueryStarting,
-    setQueryStopping,
-    setEditorLoading,
+    setIsQueryStarting,
+    setIsQueryStopping,
+    setIsEditorLoading,
   } = useContext(EditorContext) ?? {};
   return {
+    store,
     editor,
-    currentValue,
-    currentMode,
     sessionID,
     isQueryStarting,
     isQueryStopping,
     isEditorLoading,
+    setSessionID,
+    getSessionState,
+    createTabSession,
+    changeTabSession,
+    removeTabSession,
+    saveTabSession,
     setEditor,
-    setValue,
-    setMode,
-    setSession,
-    setQueryStarting,
-    setQueryStopping,
-    setEditorLoading,
+    setIsQueryStarting,
+    setIsQueryStopping,
+    setIsEditorLoading,
   };
 };
 
-const EditorProvider: React.FC<EditorProviderProps> = ({
-  children,
-  defaultState,
-}) => {
+const EditorProvider: React.FC<EditorProviderProps> = ({ children, defaultState, store }) => {
   const {
-    editor: defaultEditor,
-    currentValue: defaultValue,
-    currentMode: defaultMode,
-    sessionID: defaultSessionID,
     isQueryStarting: defaultIsQueryStarting,
     isQueryStopping: defaultIsQueryStopping,
     isEditorLoading: defaultIsEditorLoading,
   } = defaultState ?? {};
-  const [editor, setEditor] = useState<EditorContextState["editor"]>(
-    defaultEditor ?? null
-  );
-  const [currentValue, setCurrentValue] = useState(defaultValue ?? "");
-  const [currentMode, setCurrentMode] = useState(defaultMode ?? "");
-  const [sessionID, setSessionID] = useState(defaultSessionID ?? "");
-  const [isQueryStarting, setIsQueryStarting] = useState(
-    defaultIsQueryStarting ?? false
-  );
-  const [isQueryStopping, setIsQueryStopping] = useState(
-    defaultIsQueryStopping ?? false
-  );
-  const [isEditorLoading, setIsEditorLoading] = useState(
-    defaultIsEditorLoading ?? false
-  );
+
+  // state can affect re-render all of provider's chlidren
+  const [isQueryStarting, setIsQueryStarting] = useState(defaultIsQueryStarting ?? false);
+  const [isQueryStopping, setIsQueryStopping] = useState(defaultIsQueryStopping ?? false);
+  const [isEditorLoading, setIsEditorLoading] = useState(defaultIsEditorLoading ?? false);
 
   return (
     <EditorContext.Provider
       value={{
-        editor,
-        currentValue,
-        currentMode,
-        sessionID,
+        store: store,
+        editor: store.editor,
+        sessionID: store.sessionID,
         isQueryStarting,
         isQueryStopping,
         isEditorLoading,
-        setEditor,
-        setValue: setCurrentValue,
-        setMode: setCurrentMode,
-        setSession: setSessionID,
-        setQueryStarting: setIsQueryStarting,
-        setQueryStopping: setIsQueryStopping,
-        setEditorLoading: setIsEditorLoading,
-      }}
-    >
+        setSessionID: store.setSessionID,
+        getSessionState: store.getSessionState,
+        createTabSession: store.createTabSession,
+        changeTabSession: store.changeTabSession,
+        removeTabSession: store.removeTabSession,
+        saveTabSession: store.saveTabSession,
+        setEditor: store.setEditor,
+        setIsQueryStarting,
+        setIsQueryStopping,
+        setIsEditorLoading,
+      }}>
       {children}
     </EditorContext.Provider>
   );
 };
 
-export interface EditorContextState {
-  editor: monaco.editor.IStandaloneCodeEditor;
-  currentValue: string;
-  currentMode: string; // current language model
-  sessionID: string; // Editor Session ID
+export interface EditorContextState extends Omit<InstanceType<typeof EditorStore>, "#store"> {
+  store: EditorStore;
+  // storage for session's model, state, and something...
   isQueryStarting?: boolean;
   isQueryStopping?: boolean;
   isEditorLoading?: boolean;
-  setEditor?: Dispatch<SetStateAction<monaco.editor.IStandaloneCodeEditor>>;
-  setValue?: Dispatch<SetStateAction<string>>;
-  setMode?: Dispatch<SetStateAction<string>>;
-  setSession?: Dispatch<SetStateAction<string>>;
-  setQueryStarting?: Dispatch<SetStateAction<boolean>>;
-  setQueryStopping?: Dispatch<SetStateAction<boolean>>;
-  setEditorLoading?: Dispatch<SetStateAction<boolean>>;
+  setIsQueryStarting?: Dispatch<SetStateAction<boolean>>;
+  setIsQueryStopping?: Dispatch<SetStateAction<boolean>>;
+  setIsEditorLoading?: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface EditorProviderProps {
-  defaultState?: EditorContextState;
+  store: EditorStore;
+  defaultState?: Partial<Omit<EditorContextState, "editor">>;
   children?: ReactNode;
 }
 

@@ -17,7 +17,7 @@ export default class ThanosErrorListener implements ErrorListener<any> {
     line: number,
     charPositionInLine: number,
     message: string,
-    e: RecognitionException | undefined
+    e: RecognitionException | undefined,
   ): void {
     this.errors.push({
       startLineNumber: line,

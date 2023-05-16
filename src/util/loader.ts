@@ -1,7 +1,4 @@
-import {
-  languageWorkerPath as thanosqlWorkerPath,
-  languageID as thanosqlID,
-} from "@/thanosql/config";
+import { languageWorkerPath as thanosqlWorkerPath, languageID as thanosqlID } from "@/thanosql/config";
 
 const config = {
   [thanosqlID]: {
@@ -10,12 +7,7 @@ const config = {
 };
 
 export const initMonacoWorker = () => {
-  ["thanosql", "default"].map((label) =>
-    pipe(
-      appendScript,
-      getMonacoWorkerScript
-    )({ label, path: config?.[label]?.path })
-  );
+  ["thanosql", "default"].map(label => pipe(appendScript, getMonacoWorkerScript)({ label, path: config?.[label]?.path }));
 };
 
 const loadScript = (src: string) => {
@@ -24,19 +16,10 @@ const loadScript = (src: string) => {
   return script;
 };
 
-const appendScript = (script: HTMLScriptElement) =>
-  document.body.appendChild(script);
+const appendScript = (script: HTMLScriptElement) => document.body.appendChild(script);
 
-const getMonacoWorkerScript = ({
-  onLoad = () => console.log("load"),
-  label = "default",
-  path,
-}) => {
-  const script = loadScript(
-    `https://cdn.jsdelivr.net/npm/${
-      path ?? "monaco-editor@0.34.1/esm/vs/editor/editor.worker.js"
-    }`
-  );
+const getMonacoWorkerScript = ({ onLoad = () => console.log("load"), label = "default", path }) => {
+  const script = loadScript(`https://cdn.jsdelivr.net/npm/${path ?? "monaco-editor@0.34.1/esm/vs/editor/editor.worker.js"}`);
   script.onload = () => onLoad();
   script.onerror = () => {
     console.error("fail to load script.");

@@ -84,7 +84,7 @@ const Editor: React.FC<EditorProps> = ({
 
   return (
     <div className="editor-wrapper" style={{ display: "flex", flexFlow: "column nowrap", height: "100%" }}>
-      <EditorLauncher onStartQuery={onStartQuery} onStopQuery={onStopQuery} />
+      {editor && <EditorLauncher onStartQuery={onStartQuery} onStopQuery={onStopQuery} />}
       <div
         hidden={!divNode && isEditorLoading}
         ref={assignRef}

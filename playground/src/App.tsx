@@ -36,10 +36,10 @@ function App() {
                   isModule: true,
                 },
               }}
-              onStartQuery={editor => {
+              onStartQuery={(selectededitor, targetValue) => {
                 setIsQueryStarting(true);
-                const queryValue = editor?.getValue();
-                console.log(queryValue);
+                const queryValue = selectededitor?.getValue();
+                console.log("entire query:\n", queryValue, "\nselection query:\n", targetValue);
                 setTimeout(() => setIsQueryStarting(false), 2000);
               }}
             />

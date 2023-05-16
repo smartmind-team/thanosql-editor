@@ -9,10 +9,9 @@ export const setWorkers = (workerPaths: WorkerPaths): void => {
       const workerList = Object.fromEntries(
         Object.entries(workerPaths).map(([langId, property]) => {
           const key = JSON.stringify(property);
-          if (!workerCache.has(key))
-            workerCache.set(key, generateWorker(property));
+          if (!workerCache.has(key)) workerCache.set(key, generateWorker(property));
           return [langId, workerCache.get(key)];
-        })
+        }),
       );
       if (workerList?.[label]) return workerList[label];
       return workerList.default;
@@ -20,11 +19,7 @@ export const setWorkers = (workerPaths: WorkerPaths): void => {
   };
 };
 
-const generateWorker: GetWorkerFunc = ({
-  url = "",
-  base = window.location.href,
-  isModule = true,
-}) => {
+const generateWorker: GetWorkerFunc = ({ url = "", base = window.location.href, isModule = true }) => {
   return new Worker(new URL(url, base).href, {
     type: isModule ? "module" : "classic",
   });

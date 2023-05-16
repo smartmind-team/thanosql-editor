@@ -6,36 +6,15 @@ import * as monaco from "monaco-editor-core";
 import { useEditorContext } from "../EditorProvider";
 import LoadingSpinner from "../LoadingSpinner";
 
-const EditorLauncher = ({
-  onStartQuery,
-  onStopQuery,
-  ...props
-}: EditorLauncherProps) => {
+const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherProps) => {
   const { editor, isQueryStarting, isQueryStopping } = useEditorContext();
   return (
     <div css={EditorLauncherStyle} {...props}>
-      {isQueryStopping ? (
-        <LoadingSpinner />
-      ) : (
-        <StopIcon
-          onClick={() =>
-            !isQueryStarting &&
-            !isQueryStopping &&
-            onStopQuery &&
-            onStopQuery(editor)
-          }
-        />
-      )}
+      {isQueryStopping ? <LoadingSpinner /> : <StopIcon onClick={() => !isQueryStarting && !isQueryStopping && onStopQuery && onStopQuery(editor)} />}
       {isQueryStarting ? (
         <LoadingSpinner />
       ) : (
-        <StartIcon
-          onClick={() =>
-            !isQueryStarting &&
-            !isQueryStopping &&
-            editor.trigger('', 'executeSelectedCode', '')
-          }
-        />
+        <StartIcon onClick={() => !isQueryStarting && !isQueryStopping && editor.trigger("", "executeSelectedCode", "")} />
       )}
     </div>
   );

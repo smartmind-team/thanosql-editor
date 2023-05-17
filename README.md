@@ -36,7 +36,9 @@ npm install @smartmind-team/thanosql-editor@latest
 
 It serves esm as well as cjs, and this component is available in both module environments.
 
-> ** Warning ** > **thanos.worker.js is not working yet**, so you can see the error about workerPath.
+> **Warning** 
+> 
+> **thanos.worker.js is not working yet**, so you can see the error about workerPath.
 
 ```ts
 // App.tsx
@@ -124,7 +126,7 @@ npm run build
 
 ## Test for Library (Playground)
 
-> ** Warning **
+> **Warning**
 >
 > 1. Before running the code below, you must run the **`development setting`** part first.
 > 2. When you change lib code(and run `npm run build` in the root directory), then you must restart(npm run dev) playground for the library change to take effect.

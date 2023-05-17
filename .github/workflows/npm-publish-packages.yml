@@ -57,7 +57,7 @@ jobs:
       - name: Bump release version
         if: startsWith(github.event.inputs.release-type, 'pre') != true
         run: |
-          echo "NEW_VERSION=$(yarn --no-git-tag-version version --new-version $RELEASE_TYPE -v)" >> $GITHUB_ENV
+          echo "NEW_VERSION=$(npm --no-git-tag-version version --new-version $RELEASE_TYPE | grep -oe "[0-9].*")" >> $GITHUB_ENV
           echo "RELEASE_TAG=latest" >> $GITHUB_ENV
         env:
           RELEASE_TYPE: ${{ github.event.inputs.release-type }}

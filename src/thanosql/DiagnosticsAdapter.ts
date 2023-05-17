@@ -31,11 +31,7 @@ export default class DiagnosticsAdapter {
     // get the current model(editor or file) which is only one
     const model = monaco.editor.getModel(resource);
     // add the error markers and underline them with severity of Error
-    monaco.editor.setModelMarkers(
-      model,
-      languageID,
-      errorMarkers.map(toDiagnostics)
-    );
+    monaco.editor.setModelMarkers(model, languageID, errorMarkers.map(toDiagnostics));
   }
 }
 

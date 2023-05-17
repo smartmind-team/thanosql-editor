@@ -3,8 +3,7 @@ import ILanguageExtensionPoint = monaco.languages.ILanguageExtensionPoint;
 import ILanguage = monaco.languages.IMonarchLanguage;
 
 export const languageID = "thanosql";
-export const languageWorkerPath =
-  "@smartmind-team/thanosql-editor@1.0.1/lib/es/thanosql/thanos.worker.js";
+export const languageWorkerPath = "@smartmind-team/thanosql-editor@1.0.1/lib/es/thanosql/thanos.worker.js";
 export const languageExtensionPoint: ILanguageExtensionPoint = {
   id: languageID,
 };
@@ -43,19 +42,7 @@ export const monarchLanguage: ILanguage = {
     { open: "[", close: "]", token: "delimiter.square" },
     { open: "(", close: ")", token: "delimiter.parenthesis" },
   ],
-  thanosqlKeywords: [
-    "BUILD",
-    "MODEL",
-    "PREDICT",
-    "EVALUATE",
-    "FIT",
-    "UPLOAD",
-    "DATASET",
-    "TUTORIAL",
-    "PREPROCESS",
-    "UPDATE",
-    "TABLE",
-  ],
+  thanosqlKeywords: ["BUILD", "MODEL", "PREDICT", "EVALUATE", "FIT", "UPLOAD", "DATASET", "TUTORIAL", "PREPROCESS", "UPDATE", "TABLE"],
   thanosqlOperators: ["USING", "AS", "OPTIONS"],
   pgKeywords: [
     "ABORT_AFTER_WAIT",

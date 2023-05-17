@@ -1,9 +1,7 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useRef, useCallback, useEffect } from "react";
 import * as monaco from "monaco-editor-core";
 import { setupLanguage } from "@/thanosql/setup";
-import EditorLauncher, {
-  EditorLauncherProps,
-} from "@/components/EditorLauncher";
+import EditorLauncher, { EditorLauncherProps } from "@/components/EditorLauncher";
 import { WorkerPaths, setWorkers } from "@/util/setWorkers";
 import { useEditorContext } from "../EditorProvider";
 
@@ -19,40 +17,35 @@ const Editor: React.FC<EditorProps> = ({
   onStopQuery,
   ...props
 }) => {
-  const {
-    editor,
-    currentValue,
-    currentMode,
-    sessionID,
-    isEditorLoading,
-    setEditor,
-    setValue,
-    setMode,
-    setSession,
-    setEditorLoading,
-  } = useEditorContext();
+  const { editor, isEditorLoading, sessionID, setEditor, setIsEditorLoading, createTabSession, getSessionState, saveTabSession } = useEditorContext();
+
   let divNode;
   const effectCalled = useRef<boolean>(false);
-  const assignRef = useCallback((node) => {
+  const assignRef = useCallback(node => {
     // On mount get the ref of the div and assign it the divNode
     divNode = node;
+    setIsEditorLoading(true);
   }, []);
 
   useEffect(() => {
     if (divNode && !effectCalled.current) {
+      // presetting step
       setupLanguage();
+
+      // if current SessionID has previous store(model);
+      const model = createTabSession(sessionID, { language }).model;
+
+      // create monaco-editor instance
       const editor = monaco.editor.create(divNode, {
-        language: language,
+        model,
         minimap: { enabled: false },
         autoIndent: "full",
         theme: "thanosql-light",
         mouseWheelZoom: true,
         fontSize: 16,
-        value: defaultValue,
         inDiffEditor: false,
         renderLineHighlight: "none",
-        lineNumbers: (ln) =>
-          '<span style="padding-left: 16px; color: #C7C9CC;">' + ln + "</span>",
+        lineNumbers: ln => '<span style="padding-left: 16px; color: #C7C9CC;">' + ln + "</span>",
         glyphMargin: false,
         folding: false,
         lineDecorationsWidth: "32px",
@@ -63,8 +56,8 @@ const Editor: React.FC<EditorProps> = ({
       });
 
       // ResizeObserver for auto resize monaco editor
-      const ro = new ResizeObserver((entries) => {
-        entries.forEach((entry) => {
+      const ro = new ResizeObserver(entries => {
+        entries.forEach(entry => {
           const { width, height } = entry.contentRect;
           editor.layout({
             width,
@@ -73,20 +66,25 @@ const Editor: React.FC<EditorProps> = ({
         });
       });
       ro.observe(divNode);
-
+      if (getSessionState()?.state) editor.restoreViewState(getSessionState().state);
       setEditor(editor);
-      setEditorLoading(false);
+      setIsEditorLoading(false);
       setWorkers(workerPaths);
+
       effectCalled.current = true;
     }
+    return () => {
+      saveTabSession();
+    };
   }, [assignRef]);
 
+  useEffect(() => {
+    if (editor) editor.focus();
+  }, [editor]);
+
   return (
-    <div
-      className="editor-wrapper"
-      style={{ display: "flex", flexFlow: "column nowrap", height: "100%" }}
-    >
-      <EditorLauncher onStartQuery={onStartQuery} onStopQuery={onStopQuery} />
+    <div className="editor-wrapper" style={{ display: "flex", flexFlow: "column nowrap", height: "100%" }}>
+      {editor && <EditorLauncher onStartQuery={onStartQuery} onStopQuery={onStopQuery} />}
       <div
         hidden={!divNode && isEditorLoading}
         ref={assignRef}
@@ -102,8 +100,7 @@ const Editor: React.FC<EditorProps> = ({
           flex: 2,
           ...style,
         }}
-        {...props}
-      ></div>
+        {...props}></div>
       {isEditorLoading && "isLoading..."}
     </div>
   );
@@ -111,6 +108,7 @@ const Editor: React.FC<EditorProps> = ({
 
 export interface EditorCustomProps {
   language?: string;
+  sessionID?: string;
   defaultValue?: string;
   width?: string | number;
   height?: string | number;
@@ -118,8 +116,6 @@ export interface EditorCustomProps {
   options?: monaco.editor.IStandaloneEditorConstructionOptions;
 }
 
-export type EditorProps = EditorCustomProps &
-  React.HTMLAttributes<HTMLDivElement> &
-  Omit<EditorLauncherProps, "editor">;
+export type EditorProps = EditorCustomProps & React.HTMLAttributes<HTMLDivElement> & Omit<EditorLauncherProps, "editor">;
 
 export default Editor;

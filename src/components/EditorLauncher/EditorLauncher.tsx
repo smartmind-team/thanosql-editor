@@ -23,7 +23,7 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherP
       if (selectedValue === "") {
         selectedValue = model.getValue();
       }
-      onStartQuery(editor, selectedValue);
+      selectedValue && onStartQuery(editor, selectedValue);
     },
   };
 

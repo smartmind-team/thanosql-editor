@@ -13,8 +13,7 @@ const Editor: React.FC<EditorProps> = ({
   style,
   workerPaths,
   options,
-  onStartQuery,
-  onStopQuery,
+  launcherProps,
   ...props
 }) => {
   const { editor, isEditorLoading, sessionID, setEditor, setIsEditorLoading, createTabSession, getSessionState, saveTabSession } = useEditorContext();
@@ -84,7 +83,7 @@ const Editor: React.FC<EditorProps> = ({
 
   return (
     <div className="editor-wrapper" style={{ display: "flex", flexFlow: "column nowrap", height: "100%" }}>
-      {editor && <EditorLauncher onStartQuery={onStartQuery} onStopQuery={onStopQuery} />}
+      {editor && <EditorLauncher {...launcherProps} />}
       <div
         hidden={!divNode && isEditorLoading}
         ref={assignRef}
@@ -114,8 +113,9 @@ export interface EditorCustomProps {
   height?: string | number;
   workerPaths?: WorkerPaths;
   options?: monaco.editor.IStandaloneEditorConstructionOptions;
+  launcherProps?: EditorLauncherProps;
 }
 
-export type EditorProps = EditorCustomProps & React.HTMLAttributes<HTMLDivElement> & Omit<EditorLauncherProps, "editor">;
+export type EditorProps = EditorCustomProps & React.HTMLAttributes<HTMLDivElement>;
 
 export default Editor;

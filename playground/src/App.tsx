@@ -18,6 +18,8 @@ function App() {
     console.log(activeTab);
     setTimeout(() => setIsQueryStarting(false), 2000);
   };
+
+  console.log(!editor?.getValue());
   return (
     <div
       className="App"
@@ -47,7 +49,9 @@ function App() {
                   isModule: true,
                 },
               }}
-              onStartQuery={handleStart}
+              launcherProps={{
+                onStartQuery: handleStart,
+              }}
             />
           </div>
         </>

@@ -1,12 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { HTMLAttributes, useEffect, useRef } from "react";
+import { HTMLAttributes, useEffect, useRef, useState } from "react";
 import { StartIcon, StopIcon } from "../Icons";
 import * as monaco from "monaco-editor-core";
 import { useEditorContext } from "../EditorProvider";
 import LoadingSpinner from "../LoadingSpinner";
+import { useEffectOnce } from "@/util/useEffectOnce";
 
-const EditorLauncher = ({ onStartQuery, onStopQuery, disabled, ...props }: EditorLauncherProps) => {
+const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherProps) => {
   const { editor, isQueryStarting, isQueryStopping } = useEditorContext();
   const runAction: monaco.editor.IActionDescriptor = {
     id: "runSelectedOrEntireQuery",
@@ -38,14 +39,23 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, disabled, ...props }: Edito
     switchAction();
   }, [onStartQuery]);
 
+  /** It's for being disable launcher menu when editor has no contents. */
+  const [disabled, setDisabled] = useState(!editor.getValue());
+  useEffectOnce(() => {
+    editor.onDidChangeModelContent(() => {
+      const value = editor.getValue();
+      setDisabled(!value);
+    });
+  });
+
   return (
     <div css={EditorLauncherStyle} {...props}>
       {isQueryStopping ? (
         <LoadingSpinner />
       ) : (
         onStopQuery && (
-          <span id="stop-button" onClick={() => !isQueryStarting && onStopQuery(editor)}>
-            <StopIcon style={{ opacity: disabled?.stop ? 0.5 : 1 }} />
+          <span id="stop-button" onClick={() => !disabled && !isQueryStarting && onStopQuery(editor)}>
+            <StopIcon style={{ opacity: disabled ? 0.5 : 1, cursor: "default" }} />
           </span>
         )
       )}
@@ -53,8 +63,8 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, disabled, ...props }: Edito
         <LoadingSpinner />
       ) : (
         onStartQuery && (
-          <span id="start-button" onClick={() => !isQueryStopping && editor.trigger("run query", runAction.id, {})}>
-            <StartIcon style={{ opacity: disabled?.start ? 0.5 : 1 }} />
+          <span id="start-button" onClick={() => !disabled && !isQueryStopping && editor.trigger("run query", runAction.id, {})}>
+            <StartIcon style={{ opacity: disabled ? 0.5 : 1, cursor: "default" }} />
           </span>
         )
       )}
@@ -72,10 +82,6 @@ const EditorLauncherStyle = css`
 export interface EditorLauncherProps extends HTMLAttributes<HTMLDivElement> {
   onStartQuery?: EditorLauncherEventHandler;
   onStopQuery?: EditorLauncherEventHandler;
-  disabled?: {
-    start?: boolean;
-    stop?: boolean;
-  };
 }
 
 export type EditorLauncherEventHandler = {

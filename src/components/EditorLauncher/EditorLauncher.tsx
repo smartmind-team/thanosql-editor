@@ -1,14 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { HTMLAttributes, useEffect } from "react";
+import { HTMLAttributes, useEffect, useRef } from "react";
 import { StartIcon, StopIcon } from "../Icons";
 import * as monaco from "monaco-editor-core";
 import { useEditorContext } from "../EditorProvider";
 import LoadingSpinner from "../LoadingSpinner";
 
-const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherProps) => {
+const EditorLauncher = ({ onStartQuery, onStopQuery, disabled, ...props }: EditorLauncherProps) => {
   const { editor, isQueryStarting, isQueryStopping } = useEditorContext();
-
   const runAction: monaco.editor.IActionDescriptor = {
     id: "runSelectedOrEntireQuery",
     label: "Run (selected) query",
@@ -23,19 +22,42 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherP
       if (selectedValue === "") {
         selectedValue = model.getValue();
       }
-      onStartQuery && onStartQuery(editor, selectedValue);
+      onStartQuery(editor, selectedValue);
     },
   };
 
+  /** It's for update onStartQuery's closure */
+  const actionRegistration = useRef(null);
+  const switchAction = () => {
+    if (actionRegistration.current) {
+      actionRegistration.current.dispose();
+    }
+    actionRegistration.current = editor.addAction({ ...runAction });
+  };
   useEffect(() => {
-    if (!editor) return;
-    editor.addAction(runAction);
-  }, [editor, onStartQuery]);
+    switchAction();
+  }, [onStartQuery]);
 
   return (
     <div css={EditorLauncherStyle} {...props}>
-      {isQueryStopping ? <LoadingSpinner /> : <StopIcon onClick={() => !isQueryStarting && onStopQuery && onStopQuery(editor)} />}
-      {isQueryStarting ? <LoadingSpinner /> : <StartIcon onClick={() => !isQueryStopping && editor.trigger("", "runSelectedOrEntireQuery", "")} />}
+      {isQueryStopping ? (
+        <LoadingSpinner />
+      ) : (
+        onStopQuery && (
+          <span id="stop-button" onClick={() => !isQueryStarting && onStopQuery(editor)}>
+            <StopIcon style={{ opacity: disabled?.stop ? 0.5 : 1 }} />
+          </span>
+        )
+      )}
+      {isQueryStarting ? (
+        <LoadingSpinner />
+      ) : (
+        onStartQuery && (
+          <span id="start-button" onClick={() => !isQueryStopping && editor.trigger("run query", runAction.id, {})}>
+            <StartIcon style={{ opacity: disabled?.start ? 0.5 : 1 }} />
+          </span>
+        )
+      )}
     </div>
   );
 };
@@ -50,6 +72,10 @@ const EditorLauncherStyle = css`
 export interface EditorLauncherProps extends HTMLAttributes<HTMLDivElement> {
   onStartQuery?: EditorLauncherEventHandler;
   onStopQuery?: EditorLauncherEventHandler;
+  disabled?: {
+    start?: boolean;
+    stop?: boolean;
+  };
 }
 
 export type EditorLauncherEventHandler = {

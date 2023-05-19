@@ -46,6 +46,10 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherP
       const value = editor.getValue();
       setDisabled(!value);
     });
+    editor.onDidChangeModel(() => {
+      const value = editor.getValue();
+      setDisabled(!value);
+    });
   });
 
   return (

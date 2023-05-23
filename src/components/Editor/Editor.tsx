@@ -16,7 +16,17 @@ const Editor: React.FC<EditorProps> = ({
   launcherProps,
   ...props
 }) => {
-  const { editor, isEditorLoading, sessionID, setEditor, setIsEditorLoading, createTabSession, getSessionState, saveTabSession } = useEditorContext();
+  const {
+    editor: Editor,
+    isEditorLoading,
+    sessionID,
+    store,
+    setEditor,
+    setIsEditorLoading,
+    createTabSession,
+    getSessionState,
+    saveTabSession,
+  } = useEditorContext();
 
   let divNode;
   const effectCalled = useRef<boolean>(false);
@@ -30,9 +40,8 @@ const Editor: React.FC<EditorProps> = ({
     if (divNode && !effectCalled.current) {
       // presetting step
       setupLanguage();
-
       // if current SessionID has previous store(model);
-      const model = createTabSession(sessionID, { language }).model;
+      const model = getSessionState()?.model ?? createTabSession(sessionID, { language, value: defaultValue }).model;
 
       // create monaco-editor instance
       const editor = monaco.editor.create(divNode, {
@@ -77,13 +86,13 @@ const Editor: React.FC<EditorProps> = ({
     };
   }, [assignRef]);
 
-  useEffect(() => {
-    if (editor) editor.focus();
-  }, [editor]);
+  // useEffect(() => {
+  //   if (editor) editor.focus();
+  // }, [editor]);
 
   return (
     <div className="editor-wrapper" style={{ display: "flex", flexFlow: "column nowrap", height: "100%" }}>
-      {editor && <EditorLauncher {...launcherProps} />}
+      {Editor && <EditorLauncher {...launcherProps} />}
       <div
         hidden={!divNode && isEditorLoading}
         ref={assignRef}

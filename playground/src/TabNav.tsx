@@ -63,7 +63,7 @@ export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemove
         onClick={() => {
           const newTab = { id: v4(), name: "tab" + (TabList?.length + 1) };
           setTabList([...TabList, newTab]);
-          changeTabSession(newTab.id);
+          changeTabSession(newTab.id, { value: "default value\n \t this is test\r\n" });
           setActiveIndex(TabList.length);
         }}>
         add tab

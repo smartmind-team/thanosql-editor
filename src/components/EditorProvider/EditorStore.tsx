@@ -24,20 +24,38 @@ class EditorStore {
     return this.#store.get(sessionID);
   };
 
-  createTabSession = (sessionID: string, options?: { value?: string; language?: string }) => {
+  createTabSession = (sessionID: string, options?: CreateSessionOptions) => {
     if (!this.#store.has(sessionID)) {
       const model = monaco.editor.createModel(options?.value ?? "", options?.language ?? "thanosql");
-      this.#store.set(sessionID, { model, state: null });
+      const lineNumber = model.getLineCount();
+      const position = { column: model.getLineMaxColumn(lineNumber), lineNumber };
+      const state: monaco.editor.ICodeEditorViewState = {
+        cursorState: [
+          {
+            inSelectionMode: false,
+            position,
+            selectionStart: position,
+          },
+        ],
+        viewState: {
+          firstPosition: { column: 1, lineNumber: 1 },
+          firstPositionDeltaTop: 0,
+          scrollLeft: 0,
+        },
+        contributionsState: null,
+      };
+
+      this.#store.set(sessionID, { model, state });
     }
     return this.#store.get(sessionID);
   };
 
-  changeTabSession = (desiredTabSessionID: string) => {
+  changeTabSession = (desiredTabSessionID: string, options?: CreateSessionOptions) => {
     this.saveTabSession();
     this.setSessionID(desiredTabSessionID);
 
     // If the desired TabSessionID does not exist, create new one.
-    if (!this.#store.has(desiredTabSessionID)) this.createTabSession(desiredTabSessionID);
+    if (!this.#store.has(desiredTabSessionID)) this.createTabSession(desiredTabSessionID, options);
     const { model, state } = this.#store.get(desiredTabSessionID);
     this.editor.setModel(model);
     this.editor.restoreViewState(state);
@@ -60,4 +78,9 @@ export default EditorStore;
 export interface EditorDefaultStore {
   model: monaco.editor.ITextModel;
   state: monaco.editor.ICodeEditorViewState;
+}
+
+export interface CreateSessionOptions {
+  value?: string;
+  language?: string;
 }

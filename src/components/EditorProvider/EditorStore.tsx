@@ -78,7 +78,8 @@ class EditorStore {
     this.editor.setModel(model);
     this.editor.restoreViewState(state);
     this.editor.focus();
-    this.editor.setScrollTop(0);
+    console.log(model, state);
+    if (state.viewState.firstPosition.lineNumber === 1) this.editor.setScrollTop(0);
   };
 }
 

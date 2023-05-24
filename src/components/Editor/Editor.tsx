@@ -16,17 +16,8 @@ const Editor: React.FC<EditorProps> = ({
   launcherProps,
   ...props
 }) => {
-  const {
-    editor: Editor,
-    isEditorLoading,
-    sessionID,
-    store,
-    setEditor,
-    setIsEditorLoading,
-    createTabSession,
-    getSessionState,
-    saveTabSession,
-  } = useEditorContext();
+  const { editor, isEditorLoading, sessionID, store, setEditor, setIsEditorLoading, createTabSession, getSessionState, saveTabSession } =
+    useEditorContext();
 
   let divNode;
   const effectCalled = useRef<boolean>(false);
@@ -86,13 +77,13 @@ const Editor: React.FC<EditorProps> = ({
     };
   }, [assignRef]);
 
-  // useEffect(() => {
-  //   if (editor) editor.focus();
-  // }, [editor]);
+  useEffect(() => {
+    if (editor) editor.focus();
+  }, [editor]);
 
   return (
     <div className="editor-wrapper" style={{ display: "flex", flexFlow: "column nowrap", height: "100%" }}>
-      {Editor && <EditorLauncher {...launcherProps} />}
+      {editor && <EditorLauncher {...launcherProps} />}
       <div
         hidden={!divNode && isEditorLoading}
         ref={assignRef}

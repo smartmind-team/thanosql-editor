@@ -78,6 +78,7 @@ class EditorStore {
     this.editor.setModel(model);
     this.editor.restoreViewState(state);
     this.editor.focus();
+    this.editor.setScrollTop(0);
   };
 }
 

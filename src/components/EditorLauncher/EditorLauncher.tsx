@@ -5,7 +5,6 @@ import { StartIcon, StopIcon } from "../Icons";
 import * as monaco from "monaco-editor-core";
 import { useEditorContext } from "../EditorProvider";
 import LoadingSpinner from "../LoadingSpinner";
-import { useEffectOnce } from "@/util/useEffectOnce";
 
 const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherProps) => {
   const { editor, isQueryStarting, isQueryStopping } = useEditorContext();
@@ -41,16 +40,20 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherP
 
   /** It's for being disable launcher menu when editor has no contents. */
   const [disabled, setDisabled] = useState(!editor.getValue());
-  useEffectOnce(() => {
-    editor.onDidChangeModelContent(() => {
+  useEffect(() => {
+    let modelContentChangeListener = editor.onDidChangeModelContent(() => {
       const value = editor.getValue();
       setDisabled(!value);
     });
-    editor.onDidChangeModel(() => {
+    let modelChangeListener = editor.onDidChangeModel(() => {
       const value = editor.getValue();
       setDisabled(!value);
     });
-  });
+    return () => {
+      modelContentChangeListener.dispose();
+      modelChangeListener.dispose();
+    };
+  }, [editor]);
 
   return (
     <div css={EditorLauncherStyle} {...props}>

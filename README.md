@@ -26,7 +26,7 @@ The monaco-editor is the fully featured code editor from VS Code. Check out the 
 `thanosql-editor` has dependencies on [monaco-editor-core](https://github.com/opensumi/monaco-editor-core) package.
 | package | version |
 | -- | -- |
-| monaco-editor-core | ^0.34.1 |
+| monaco-editor-core | ^0.38.0 |
 
 ```shell
 npm install @smartmind-team/thanosql-editor@latest
@@ -36,8 +36,8 @@ npm install @smartmind-team/thanosql-editor@latest
 
 It serves esm as well as cjs, and this component is available in both module environments.
 
-> **Warning** 
-> 
+> **Warning**
+>
 > **thanos.worker.js is not working yet**, so you can see the error about workerPath.
 
 ```ts

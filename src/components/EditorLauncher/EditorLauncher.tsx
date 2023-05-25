@@ -1,44 +1,80 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, useEffect, useRef, useState } from "react";
 import { StartIcon, StopIcon } from "../Icons";
 import * as monaco from "monaco-editor-core";
 import { useEditorContext } from "../EditorProvider";
 import LoadingSpinner from "../LoadingSpinner";
-import { useEffectOnce } from "@/util/useEffectOnce";
 
 const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherProps) => {
   const { editor, isQueryStarting, isQueryStopping } = useEditorContext();
+  const runAction: monaco.editor.IActionDescriptor = {
+    id: "runSelectedOrEntireQuery",
+    label: "Run (selected) query",
+    contextMenuOrder: 2,
+    contextMenuGroupId: "1_modification",
+    keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
+    run: editor => {
+      const model = editor.getModel();
+      // by default, only run selected value
+      let selectedValue = model.getValueInRange(editor.getSelection());
+      // however, if nothing is selected, we run all editor value
+      if (selectedValue === "") {
+        selectedValue = model.getValue();
+      }
+      selectedValue && onStartQuery(editor, selectedValue);
+    },
+  };
 
-  useEffectOnce(() => {
-    if (!editor) return;
+  /** It's for update onStartQuery's closure */
+  const actionRegistration = useRef(null);
+  const switchAction = () => {
+    if (actionRegistration.current) {
+      actionRegistration.current.dispose();
+    }
+    actionRegistration.current = editor.addAction({ ...runAction });
+  };
+  useEffect(() => {
+    switchAction();
+  }, [onStartQuery]);
 
-    const runAction: monaco.editor.IActionDescriptor = {
-      id: "runSelectedOrEntireQuery",
-      label: "Run (selected) query",
-      contextMenuOrder: 2,
-      contextMenuGroupId: "1_modification",
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-      run: editor => {
-        const model = editor.getModel();
-        // by default, only run selected value
-        let selectedValue = model.getValueInRange(editor.getSelection());
-        // however, if nothing is selected, we run all editor value
-        if (selectedValue === "") {
-          selectedValue = model.getValue();
-        }
-
-        onStartQuery && onStartQuery(editor, selectedValue);
-      },
+  /** It's for being disable launcher menu when editor has no contents. */
+  const [disabled, setDisabled] = useState(!editor.getValue());
+  useEffect(() => {
+    let modelContentChangeListener = editor.onDidChangeModelContent(() => {
+      const value = editor.getValue();
+      setDisabled(!value);
+    });
+    let modelChangeListener = editor.onDidChangeModel(() => {
+      const value = editor.getValue();
+      setDisabled(!value);
+    });
+    return () => {
+      modelContentChangeListener.dispose();
+      modelChangeListener.dispose();
     };
-
-    editor.addAction(runAction);
-  });
+  }, [editor]);
 
   return (
     <div css={EditorLauncherStyle} {...props}>
-      {isQueryStopping ? <LoadingSpinner /> : <StopIcon onClick={() => !isQueryStarting && onStopQuery && onStopQuery(editor)} />}
-      {isQueryStarting ? <LoadingSpinner /> : <StartIcon onClick={() => !isQueryStopping && editor.trigger("", "runSelectedOrEntireQuery", "")} />}
+      {isQueryStopping ? (
+        <LoadingSpinner />
+      ) : (
+        onStopQuery && (
+          <span id="stop-button" onClick={() => !disabled && !isQueryStarting && onStopQuery(editor)}>
+            <StopIcon style={{ opacity: disabled ? 0.5 : 1, cursor: "default" }} />
+          </span>
+        )
+      )}
+      {isQueryStarting ? (
+        <LoadingSpinner />
+      ) : (
+        onStartQuery && (
+          <span id="start-button" onClick={() => !disabled && !isQueryStopping && editor.trigger("run query", runAction.id, {})}>
+            <StartIcon style={{ opacity: disabled ? 0.5 : 1, cursor: "default" }} />
+          </span>
+        )
+      )}
     </div>
   );
 };
@@ -56,7 +92,7 @@ export interface EditorLauncherProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export type EditorLauncherEventHandler = {
-  method(editor?: monaco.editor.ICodeEditor, targetValue?: string): void;
+  method(editor?: monaco.editor.ICodeEditor, targetValue?: string, ...args: unknown[]): void;
 }["method"];
 
 export default EditorLauncher;

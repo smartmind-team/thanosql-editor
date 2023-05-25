@@ -1,6 +1,6 @@
 import { useEditorContext } from "@smartmind-team/thanosql-editor";
 import { ComponentProps } from "react";
-import { atom, useRecoilState, selector } from "recoil";
+import { atom, useRecoilState, selector, useRecoilValue } from "recoil";
 import { v4 } from "uuid";
 import { defaultTab } from "./assets/config";
 
@@ -84,7 +84,7 @@ interface TabNavProps extends ComponentProps<"div"> {
 
 export const TabListAtom = atom({
   key: "tablist",
-  default: [defaultTab],
+  default: [],
 });
 
 export const TabActiveIndex = atom({
@@ -92,7 +92,14 @@ export const TabActiveIndex = atom({
   default: 0,
 });
 
-export const ActiveTab = selector({
+export const ActiveTabSelector = selector({
   key: "activeTab",
   get: ({ get }) => get(TabListAtom)?.[get(TabActiveIndex)],
 });
+
+export const useTabNavStates = () => {
+  const [TabList, setTabList] = useRecoilState(TabListAtom);
+  const [activeIndex, setActiveIndex] = useRecoilState(TabActiveIndex);
+  const activeTab = useRecoilValue(ActiveTabSelector);
+  return { TabList, setTabList, activeIndex, setActiveIndex, activeTab };
+};

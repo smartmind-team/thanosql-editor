@@ -2246,10 +2246,10 @@ minimist@^1.2.3:
   resolved "https://registry.npmjs.org/minimist/-/minimist-1.2.8.tgz"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
 
-monaco-editor-core@^0.34.1:
-  version "0.34.1"
-  resolved "https://registry.npmjs.org/monaco-editor-core/-/monaco-editor-core-0.34.1.tgz"
-  integrity sha512-RaYj0HGvKZjy7H3HCluhypExLi2Z7rpHVKc4KQ6iShqY3TW5cKGaETrr4wJ7aPz2UAWVtGmXNjea/BpoCAjY+w==
+monaco-editor-core@^0.38.0:
+  version "0.38.0"
+  resolved "https://registry.npmjs.org/monaco-editor-core/-/monaco-editor-core-0.38.0.tgz"
+  integrity sha512-xMYhffdnz+sKcA9OTxsSh4s1Wul3WocjIKZqX47ULgC5m8Fprwn6CrD+CQG663xQd3pjjoh9xEggy/wN7iqcWA==
 
 ms@2.1.2:
   version "2.1.2"

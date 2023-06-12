@@ -54,15 +54,15 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherP
       modelChangeListener.dispose();
     };
   }, [editor]);
-
+  console.log(disabled);
   return (
     <div css={EditorLauncherStyle} {...props}>
       {isQueryStopping ? (
         <LoadingSpinner />
       ) : (
         onStopQuery && (
-          <span id="stop-button" onClick={() => !disabled && !isQueryStarting && onStopQuery(editor)}>
-            <StopIcon style={{ opacity: disabled ? 0.5 : 1, cursor: "default" }} />
+          <span id="stop-button icon-button" onClick={() => !disabled && !isQueryStarting && onStopQuery(editor)}>
+            <StopIcon css={IconButton(disabled)} />
           </span>
         )
       )}
@@ -70,8 +70,8 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherP
         <LoadingSpinner />
       ) : (
         onStartQuery && (
-          <span id="start-button" onClick={() => !disabled && !isQueryStopping && editor.trigger("run query", runAction.id, {})}>
-            <StartIcon style={{ opacity: disabled ? 0.5 : 1, cursor: "default" }} />
+          <span id="start-button icon-button" onClick={() => !disabled && !isQueryStopping && editor.trigger("run query", runAction.id, {})}>
+            <StartIcon css={IconButton(disabled)} />
           </span>
         )
       )}
@@ -86,6 +86,17 @@ const EditorLauncherStyle = css`
   padding: 0.75rem 1.5rem;
   gap: 2rem;
 `;
+
+const IconButton = (disabled = false) => css`
+  opacity: ${disabled ? 0.5 : 1};
+  cursor: default;
+  ${!disabled &&
+  `&:hover {
+    cursor: pointer;
+    opacity: 0.8;
+  }`}
+`;
+
 export interface EditorLauncherProps extends HTMLAttributes<HTMLDivElement> {
   onStartQuery?: EditorLauncherEventHandler;
   onStopQuery?: EditorLauncherEventHandler;

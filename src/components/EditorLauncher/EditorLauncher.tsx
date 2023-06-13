@@ -54,7 +54,7 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherP
       modelChangeListener.dispose();
     };
   }, [editor]);
-  console.log(disabled);
+
   return (
     <div css={EditorLauncherStyle} {...props}>
       {isQueryStopping ? (

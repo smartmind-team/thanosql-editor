@@ -79,6 +79,9 @@ const Editor: React.FC<EditorProps> = ({
 
   useEffect(() => {
     if (editor) editor.focus();
+    document.fonts.ready.then(() => {
+      monaco.editor.remeasureFonts();
+    });
   }, [editor]);
 
   return (

@@ -26,6 +26,7 @@ class EditorStore {
 
   setTabSession = (sessionID: string, newSessionStore?: CreateSessionOptions) => {
     const model = monaco.editor.createModel(newSessionStore?.value ?? "", newSessionStore?.language ?? "thanosql");
+    console.log(model, "editor-store");
     const lineNumber = model.getLineCount();
     const position = { column: model.getLineMaxColumn(lineNumber), lineNumber };
     const state: monaco.editor.ICodeEditorViewState = {

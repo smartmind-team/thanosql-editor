@@ -82,7 +82,7 @@ interface TabNavProps extends ComponentProps<"div"> {
   defaultTabList?: Pick<TabProps, "id" | "name">[];
 }
 
-export const TabListAtom = atom({
+export const TabListAtom = atom<Pick<TabProps, "id" | "name">[]>({
   key: "tablist",
   default: [],
 });

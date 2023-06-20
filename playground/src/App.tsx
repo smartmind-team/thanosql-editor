@@ -1,10 +1,9 @@
 import Editor from "@smartmind-team/thanosql-editor";
 import { useEditorContext } from "@smartmind-team/thanosql-editor";
 import { useState } from "react";
-import { TabNav, ActiveTab, useTabNavStates } from "./TabNav";
+import { TabNav, useTabNavStates } from "./TabNav";
 import { defaultTab } from "./assets/config";
-import { useRecoilValue } from "recoil";
-import { EditorProps } from "@smartmind-team/thanosql-editor/lib/esm/components/Editor/Editor";
+import { EditorLauncherProps } from "@smartmind-team/thanosql-editor/lib/esm/components/EditorLauncher";
 import { v4 } from "uuid";
 
 function App() {
@@ -14,7 +13,7 @@ function App() {
   const [defaultPageHidden, setDefaultPageHidden] = useState(false);
   const { activeTab, TabList, setTabList, setActiveIndex } = useTabNavStates();
 
-  const handleStart: EditorProps["onStartQuery"] = (selectededitor, targetValue) => {
+  const handleStart: EditorLauncherProps["onStartQuery"] = (selectededitor, targetValue) => {
     setIsQueryStarting(true);
     const queryValue = selectededitor?.getValue();
     console.log("entire query:\n", queryValue, "\nselection query:\n", targetValue);
@@ -56,6 +55,7 @@ function App() {
       {defaultPageHidden && (
         <>
           {!isEditorLoading && editor && <TabNav defaultTabList={[defaultTab]} onRemoveAll={() => setDefaultPageHidden(false)} />}
+
           <div style={{ flex: 2 }}>
             <Editor
               language="thanosql"

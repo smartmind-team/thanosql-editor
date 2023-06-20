@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode, useState, Dispatch, SetStateAction, useEffect } from "react";
+import { createContext, useContext, ReactNode, useState, Dispatch, SetStateAction } from "react";
 import EditorStore from "./EditorStore";
 
 const EditorContext = createContext<EditorContextState | null>(null);
@@ -56,7 +56,7 @@ const EditorProvider: React.FC<EditorProviderProps> = ({ children, defaultState,
   // state can affect re-render all of provider's chlidren
   const [isQueryStarting, setIsQueryStarting] = useState(defaultIsQueryStarting ?? false);
   const [isQueryStopping, setIsQueryStopping] = useState(defaultIsQueryStopping ?? false);
-  const [isEditorLoading, setIsEditorLoading] = useState(defaultIsEditorLoading ?? false);
+  const [isEditorLoading, setIsEditorLoading] = useState(defaultIsEditorLoading ?? true);
 
   return (
     <EditorContext.Provider

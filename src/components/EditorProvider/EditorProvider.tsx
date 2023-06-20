@@ -1,4 +1,5 @@
-import { createContext, useContext, ReactNode, useState, Dispatch, SetStateAction } from "react";
+import * as monaco from "monaco-editor-core";
+import { createContext, useContext, ReactNode, useState, Dispatch, SetStateAction, useRef, MutableRefObject } from "react";
 import EditorStore from "./EditorStore";
 
 const EditorContext = createContext<EditorContextState | null>(null);
@@ -6,7 +7,7 @@ const EditorContext = createContext<EditorContextState | null>(null);
 export const useEditorContext = () => {
   const {
     store,
-    editor,
+    editorRef,
     sessionID,
     isQueryStarting,
     isQueryStopping,
@@ -19,14 +20,13 @@ export const useEditorContext = () => {
     removeTabSession,
     saveTabSession,
     refreshTabSession,
-    setEditor,
     setIsQueryStarting,
     setIsQueryStopping,
     setIsEditorLoading,
   } = useContext(EditorContext) ?? {};
   return {
     store,
-    editor,
+    editorRef,
     sessionID,
     isQueryStarting,
     isQueryStopping,
@@ -39,7 +39,6 @@ export const useEditorContext = () => {
     removeTabSession,
     saveTabSession,
     refreshTabSession,
-    setEditor,
     setIsQueryStarting,
     setIsQueryStopping,
     setIsEditorLoading,
@@ -57,12 +56,13 @@ const EditorProvider: React.FC<EditorProviderProps> = ({ children, defaultState,
   const [isQueryStarting, setIsQueryStarting] = useState(defaultIsQueryStarting ?? false);
   const [isQueryStopping, setIsQueryStopping] = useState(defaultIsQueryStopping ?? false);
   const [isEditorLoading, setIsEditorLoading] = useState(defaultIsEditorLoading ?? true);
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null);
 
   return (
     <EditorContext.Provider
       value={{
         store: store,
-        editor: store.editor,
+        editorRef,
         sessionID: store.sessionID,
         isQueryStarting,
         isQueryStopping,
@@ -75,7 +75,6 @@ const EditorProvider: React.FC<EditorProviderProps> = ({ children, defaultState,
         removeTabSession: store.removeTabSession,
         saveTabSession: store.saveTabSession,
         refreshTabSession: store.refreshTabSession,
-        setEditor: store.setEditor,
         setIsQueryStarting,
         setIsQueryStopping,
         setIsEditorLoading,
@@ -87,6 +86,7 @@ const EditorProvider: React.FC<EditorProviderProps> = ({ children, defaultState,
 
 export interface EditorContextState extends Omit<InstanceType<typeof EditorStore>, "#store"> {
   store: EditorStore;
+  editorRef: MutableRefObject<monaco.editor.IStandaloneCodeEditor>;
   // storage for session's model, state, and something...
   isQueryStarting?: boolean;
   isQueryStopping?: boolean;

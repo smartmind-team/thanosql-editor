@@ -4,6 +4,7 @@ import { setupLanguage } from "@/thanosql/setup";
 import EditorLauncher, { EditorLauncherProps } from "@/components/EditorLauncher";
 import { WorkerPaths, setWorkers } from "@/util/setWorkers";
 import { useEditorContext } from "../EditorProvider";
+import { useEffectOnce } from "@/util/useEffectOnce";
 
 const Editor: React.FC<EditorProps> = ({
   language = "thanosql",
@@ -16,10 +17,18 @@ const Editor: React.FC<EditorProps> = ({
   launcherProps,
   ...props
 }) => {
-  const { editor, isEditorLoading, sessionID, setEditor, setIsEditorLoading, createTabSession, getSessionState, saveTabSession } = useEditorContext();
+  const { editorRef, isEditorLoading, sessionID, setIsEditorLoading, createTabSession, getSessionState, saveTabSession } = useEditorContext();
   const containerRef = useRef<HTMLDivElement>(null);
   const effectCalled = useRef<boolean>(false);
   const modelChangeEffect = useRef<monaco.IDisposable>();
+
+  useEffectOnce(() => {
+    if (editorRef.current) {
+      saveTabSession(editorRef.current);
+      editorRef.current.dispose();
+      setIsEditorLoading(true);
+    }
+  });
 
   const createEditor = useCallback(() => {
     if (!containerRef.current || effectCalled.current) return;
@@ -32,7 +41,7 @@ const Editor: React.FC<EditorProps> = ({
     const model = getSessionState()?.model ?? createTabSession(sessionID, { language, value: defaultValue }).model;
 
     // create monaco-editor instance
-    const editor = monaco.editor.create(containerRef.current, {
+    editorRef.current = monaco.editor.create(containerRef.current, {
       model,
       minimap: { enabled: false },
       autoIndent: "full",
@@ -52,33 +61,24 @@ const Editor: React.FC<EditorProps> = ({
       ...options,
     });
 
-    if (getSessionState()?.state) editor.restoreViewState(getSessionState().state);
-    setEditor(editor); // restore editor on EditorStore
+    if (getSessionState()?.state) editorRef.current.restoreViewState(getSessionState().state);
     setIsEditorLoading(false);
     effectCalled.current = true;
   }, [language, defaultValue, workerPaths, options]);
 
   useEffect(() => {
     isEditorLoading && createEditor();
-    editor && editor.focus();
-    return editor
-      ? () => {
-          saveTabSession();
-          editor.dispose();
-          setEditor(null);
-          setIsEditorLoading(true);
-        }
-      : undefined;
+    editorRef.current && editorRef.current.focus();
   }, [isEditorLoading, createEditor]);
 
   useEffect(() => {
     modelChangeEffect.current?.dispose();
-    modelChangeEffect.current = editor?.onDidChangeModel(() => editor.focus());
+    modelChangeEffect.current = editorRef.current?.onDidChangeModel(() => editorRef.current.focus());
   }, []);
 
   return (
     <div className="editor-wrapper" style={{ display: "flex", flexFlow: "column nowrap", height: "100%" }}>
-      {editor && <EditorLauncher {...launcherProps} />}
+      {!!editorRef.current && <EditorLauncher {...launcherProps} />}
       <div
         hidden={isEditorLoading}
         ref={containerRef}

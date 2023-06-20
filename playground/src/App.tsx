@@ -8,7 +8,7 @@ import { v4 } from "uuid";
 
 function App() {
   const [testQuery, setTestQuery] = useState("");
-  const { isQueryStarting, editor, setIsQueryStarting, isEditorLoading, changeTabSession, refreshTabSession, getSessionState, setTabSession } =
+  const { isQueryStarting, editorRef, setIsQueryStarting, isEditorLoading, changeTabSession, refreshTabSession, getSessionState, setTabSession } =
     useEditorContext();
   const [defaultPageHidden, setDefaultPageHidden] = useState(false);
   const { activeTab, TabList, setTabList, setActiveIndex } = useTabNavStates();
@@ -24,7 +24,7 @@ function App() {
   const addStoredQueryTab = (value?: string) => {
     const newTab = { id: v4(), name: "tab" + (TabList?.length + 1) };
     setTabList([...TabList, newTab]);
-    changeTabSession(newTab.id, { value });
+    changeTabSession(editorRef.current, newTab.id, { value });
     setActiveIndex(TabList.length);
     setDefaultPageHidden(true);
   };
@@ -54,7 +54,7 @@ function App() {
       </button>
       {defaultPageHidden && (
         <>
-          {!isEditorLoading && editor && <TabNav defaultTabList={[defaultTab]} onRemoveAll={() => setDefaultPageHidden(false)} />}
+          {!isEditorLoading && !!editorRef.current && <TabNav defaultTabList={[defaultTab]} onRemoveAll={() => setDefaultPageHidden(false)} />}
 
           <div style={{ flex: 2 }}>
             <Editor

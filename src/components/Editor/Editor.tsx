@@ -16,8 +16,7 @@ const Editor: React.FC<EditorProps> = ({
   launcherProps,
   ...props
 }) => {
-  const { editor, isEditorLoading, store, sessionID, setEditor, setIsEditorLoading, createTabSession, getSessionState, saveTabSession } =
-    useEditorContext();
+  const { editor, isEditorLoading, sessionID, setEditor, setIsEditorLoading, createTabSession, getSessionState, saveTabSession } = useEditorContext();
   const containerRef = useRef<HTMLDivElement>(null);
   const effectCalled = useRef<boolean>(false);
   const modelChangeEffect = useRef<monaco.IDisposable>();
@@ -31,7 +30,7 @@ const Editor: React.FC<EditorProps> = ({
 
     // if current SessionID has previous store(model);
     const model = getSessionState()?.model ?? createTabSession(sessionID, { language, value: defaultValue }).model;
-    console.log(model.getValue(), model);
+
     // create monaco-editor instance
     const editor = monaco.editor.create(containerRef.current, {
       model,

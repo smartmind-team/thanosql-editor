@@ -68,7 +68,6 @@ const Editor: React.FC<EditorProps> = ({
 
   useEffect(() => {
     isEditorLoading && createEditor();
-    editorRef.current && editorRef.current.focus();
   }, [isEditorLoading, createEditor]);
 
   useEffect(() => {

@@ -46,8 +46,7 @@ import Editor from "@smartmind-team/thanosql-editor";
 import { useEditorContext } from "@smartmind-team/thanosql-editor";
 
 function App() {
-  const { isQueryStarting, editor, setQueryStarting } = useEditorContext();
-
+  const { isQueryStarting, setQueryStarting } = useEditorContext();
   return (
     <div
       className="App"

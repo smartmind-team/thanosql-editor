@@ -91,4 +91,4 @@ jobs:
 
       # Push repository changes
       - name: Push changes to repository
-        run: git push --tags
+        run: git push && git push --tags

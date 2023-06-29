@@ -7,7 +7,7 @@ import { useEditorContext } from "../EditorProvider";
 import LoadingSpinner from "../LoadingSpinner";
 
 const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherProps) => {
-  const { editor, isQueryStarting, isQueryStopping } = useEditorContext();
+  const { editorRef, isQueryStarting, isQueryStopping } = useEditorContext();
   const runAction: monaco.editor.IActionDescriptor = {
     id: "runSelectedOrEntireQuery",
     label: "Run (selected) query",
@@ -32,28 +32,28 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherP
     if (actionRegistration.current) {
       actionRegistration.current.dispose();
     }
-    actionRegistration.current = editor.addAction({ ...runAction });
+    actionRegistration.current = editorRef.current.addAction({ ...runAction });
   };
   useEffect(() => {
     switchAction();
   }, [onStartQuery]);
 
   /** It's for being disable launcher menu when editor has no contents. */
-  const [disabled, setDisabled] = useState(!editor.getValue());
+  const [disabled, setDisabled] = useState(!editorRef.current.getValue());
   useEffect(() => {
-    let modelContentChangeListener = editor.onDidChangeModelContent(() => {
-      const value = editor.getValue();
+    let modelContentChangeListener = editorRef.current.onDidChangeModelContent(() => {
+      const value = editorRef.current.getValue();
       setDisabled(!value);
     });
-    let modelChangeListener = editor.onDidChangeModel(() => {
-      const value = editor.getValue();
+    let modelChangeListener = editorRef.current.onDidChangeModel(() => {
+      const value = editorRef.current.getValue();
       setDisabled(!value);
     });
     return () => {
       modelContentChangeListener.dispose();
       modelChangeListener.dispose();
     };
-  }, [editor]);
+  }, [editorRef.current]);
 
   return (
     <div css={EditorLauncherStyle} {...props}>
@@ -61,8 +61,8 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherP
         <LoadingSpinner />
       ) : (
         onStopQuery && (
-          <span id="stop-button" onClick={() => !disabled && !isQueryStarting && onStopQuery(editor)}>
-            <StopIcon style={{ opacity: disabled ? 0.5 : 1, cursor: "default" }} />
+          <span id="stop-button icon-button" onClick={() => !disabled && !isQueryStarting && onStopQuery(editorRef.current)}>
+            <StopIcon css={IconButton(disabled)} />
           </span>
         )
       )}
@@ -70,8 +70,10 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherP
         <LoadingSpinner />
       ) : (
         onStartQuery && (
-          <span id="start-button" onClick={() => !disabled && !isQueryStopping && editor.trigger("run query", runAction.id, {})}>
-            <StartIcon style={{ opacity: disabled ? 0.5 : 1, cursor: "default" }} />
+          <span
+            id="start-button icon-button"
+            onClick={() => !disabled && !isQueryStopping && editorRef.current.trigger("run query", runAction.id, {})}>
+            <StartIcon css={IconButton(disabled)} />
           </span>
         )
       )}
@@ -86,6 +88,17 @@ const EditorLauncherStyle = css`
   padding: 0.75rem 1.5rem;
   gap: 2rem;
 `;
+
+const IconButton = (disabled = false) => css`
+  opacity: ${disabled ? 0.5 : 1};
+  cursor: default;
+  ${!disabled &&
+  `&:hover {
+    cursor: pointer;
+    opacity: 0.8;
+  }`}
+`;
+
 export interface EditorLauncherProps extends HTMLAttributes<HTMLDivElement> {
   onStartQuery?: EditorLauncherEventHandler;
   onStopQuery?: EditorLauncherEventHandler;

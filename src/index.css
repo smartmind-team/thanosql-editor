@@ -9,5 +9,5 @@
 }
 
 .monaco-editor .view-line > span > span {
-  font-family: monospace;
+  font-family: inherit;
 }

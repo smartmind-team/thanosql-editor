@@ -1,9 +1,10 @@
-import { useRef, useCallback, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import * as monaco from "monaco-editor-core";
 import { setupLanguage } from "@/thanosql/setup";
 import EditorLauncher, { EditorLauncherProps } from "@/components/EditorLauncher";
 import { WorkerPaths, setWorkers } from "@/util/setWorkers";
 import { useEditorContext } from "../EditorProvider";
+import { useEffectOnce } from "@/util/useEffectOnce";
 
 const Editor: React.FC<EditorProps> = ({
   language = "thanosql",
@@ -16,77 +17,71 @@ const Editor: React.FC<EditorProps> = ({
   launcherProps,
   ...props
 }) => {
-  const { editor, isEditorLoading, sessionID, store, setEditor, setIsEditorLoading, createTabSession, getSessionState, saveTabSession } =
-    useEditorContext();
-
-  let divNode;
+  const { editorRef, isEditorLoading, sessionID, setIsEditorLoading, createTabSession, getSessionState, saveTabSession } = useEditorContext();
+  const containerRef = useRef<HTMLDivElement>(null);
   const effectCalled = useRef<boolean>(false);
-  const assignRef = useCallback(node => {
-    // On mount get the ref of the div and assign it the divNode
-    divNode = node;
-    setIsEditorLoading(true);
-  }, []);
+  const modelChangeEffect = useRef<monaco.IDisposable>();
 
-  useEffect(() => {
-    if (divNode && !effectCalled.current) {
-      // presetting step
-      setupLanguage();
-      // if current SessionID has previous store(model);
-      const model = getSessionState()?.model ?? createTabSession(sessionID, { language, value: defaultValue }).model;
-
-      // create monaco-editor instance
-      const editor = monaco.editor.create(divNode, {
-        model,
-        minimap: { enabled: false },
-        autoIndent: "full",
-        theme: "thanosql-light",
-        mouseWheelZoom: true,
-        fontSize: 16,
-        inDiffEditor: false,
-        renderLineHighlight: "none",
-        lineNumbers: ln => '<span style="padding-left: 16px; color: #C7C9CC;">' + ln + "</span>",
-        glyphMargin: false,
-        folding: false,
-        lineDecorationsWidth: "32px",
-        lineNumbersMinChars: 0,
-        detectIndentation: true,
-        tabSize: 4,
-        ...options,
-      });
-
-      // ResizeObserver for auto resize monaco editor
-      const ro = new ResizeObserver(entries => {
-        entries.forEach(entry => {
-          const { width, height } = entry.contentRect;
-          editor.layout({
-            width,
-            height,
-          });
-        });
-      });
-      ro.observe(divNode);
-      if (getSessionState()?.state) editor.restoreViewState(getSessionState().state);
-      setEditor(editor);
-      setIsEditorLoading(false);
-      setWorkers(workerPaths);
-
-      effectCalled.current = true;
+  useEffectOnce(() => {
+    if (editorRef.current) {
+      saveTabSession(editorRef.current);
+      editorRef.current.dispose();
+      setIsEditorLoading(true);
+      monaco.editor.setTheme("thanosql-light");
     }
-    return () => {
-      saveTabSession();
-    };
-  }, [assignRef]);
+  });
+
+  const createEditor = useCallback(() => {
+    if (!containerRef.current || effectCalled.current) return;
+
+    // presetting step
+
+    setWorkers(workerPaths);
+
+    // if current SessionID has previous store(model);
+    const model = getSessionState()?.model ?? createTabSession(sessionID, { language, value: defaultValue }).model;
+
+    // create monaco-editor instance
+    editorRef.current = monaco.editor.create(containerRef.current, {
+      model,
+      minimap: { enabled: false },
+      autoIndent: "full",
+      theme: "thanosql-light",
+      mouseWheelZoom: true,
+      fontSize: 16,
+      inDiffEditor: false,
+      renderLineHighlight: "none",
+      lineNumbers: ln => '<span style="padding-left: 16px; color: #C7C9CC;">' + ln + "</span>",
+      glyphMargin: false,
+      folding: false,
+      lineDecorationsWidth: "32px",
+      lineNumbersMinChars: 0,
+      detectIndentation: true,
+      tabSize: 4,
+      automaticLayout: true,
+      ...options,
+    });
+
+    if (getSessionState()?.state) editorRef.current.restoreViewState(getSessionState().state);
+    setIsEditorLoading(false);
+    effectCalled.current = true;
+  }, [language, defaultValue, workerPaths, options]);
 
   useEffect(() => {
-    if (editor) editor.focus();
-  }, [editor]);
+    isEditorLoading && createEditor();
+  }, [isEditorLoading, createEditor]);
+
+  useEffect(() => {
+    modelChangeEffect.current?.dispose();
+    modelChangeEffect.current = editorRef.current?.onDidChangeModel(() => editorRef.current.focus());
+  }, []);
 
   return (
     <div className="editor-wrapper" style={{ display: "flex", flexFlow: "column nowrap", height: "100%" }}>
-      {editor && <EditorLauncher {...launcherProps} />}
+      {!!editorRef.current && <EditorLauncher {...launcherProps} />}
       <div
-        hidden={!divNode && isEditorLoading}
-        ref={assignRef}
+        hidden={isEditorLoading}
+        ref={containerRef}
         className="editor-container"
         style={{
           maxHeight: 916,
@@ -100,7 +95,7 @@ const Editor: React.FC<EditorProps> = ({
           ...style,
         }}
         {...props}></div>
-      {isEditorLoading && "isLoading..."}
+      {isEditorLoading && <>isLoading...</>}
     </div>
   );
 };

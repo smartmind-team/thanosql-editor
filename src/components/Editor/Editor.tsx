@@ -27,7 +27,6 @@ const Editor: React.FC<EditorProps> = ({
       saveTabSession(editorRef.current);
       editorRef.current.dispose();
       setIsEditorLoading(true);
-      monaco.editor.setTheme("thanosql-light");
     }
   });
 
@@ -35,7 +34,7 @@ const Editor: React.FC<EditorProps> = ({
     if (!containerRef.current || effectCalled.current) return;
 
     // presetting step
-
+    setupLanguage();
     setWorkers(workerPaths);
 
     // if current SessionID has previous store(model);

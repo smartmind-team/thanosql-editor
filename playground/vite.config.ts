@@ -7,4 +7,14 @@ export default defineConfig({
   server: {
     port: 5174,
   },
+  build: {
+    chunkSizeWarningLimit: 700,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "@smartmind-team/thanosql-editor": ["@smartmind-team/thanosql-editor"],
+        },
+      },
+    },
+  },
 });

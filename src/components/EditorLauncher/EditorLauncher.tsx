@@ -2,18 +2,18 @@
 import { css } from "@emotion/react";
 import { HTMLAttributes, useEffect, useRef, useState } from "react";
 import { StartIcon, StopIcon } from "../Icons";
-import * as monaco from "monaco-editor-core";
+import { editor, KeyCode, KeyMod } from "monaco-editor/esm/vs/editor/editor.api";
 import { useEditorContext } from "../EditorProvider";
 import LoadingSpinner from "../LoadingSpinner";
 
 const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherProps) => {
   const { editorRef, isQueryStarting, isQueryStopping } = useEditorContext();
-  const runAction: monaco.editor.IActionDescriptor = {
+  const runAction: editor.IActionDescriptor = {
     id: "runSelectedOrEntireQuery",
     label: "Run (selected) query",
     contextMenuOrder: 2,
     contextMenuGroupId: "1_modification",
-    keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
+    keybindings: [KeyMod.CtrlCmd | KeyCode.Enter],
     run: editor => {
       const model = editor.getModel();
       // by default, only run selected value
@@ -105,7 +105,7 @@ export interface EditorLauncherProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export type EditorLauncherEventHandler = {
-  method(editor?: monaco.editor.ICodeEditor, targetValue?: string, ...args: unknown[]): void;
+  method(editor?: editor.ICodeEditor, targetValue?: string, ...args: unknown[]): void;
 }["method"];
 
 export default EditorLauncher;

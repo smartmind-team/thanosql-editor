@@ -13,14 +13,16 @@ export const Tab = ({ name, active, children, ...props }: TabProps) => {
 };
 
 export const TabContainer = ({ children }: ComponentProps<"ul">) => {
-  return <ul style={{ display: "flex", gap: "1rem", margin: 0, padding: 0 }}>{children}</ul>;
+  return (
+    <ul style={{ display: "flex", gap: "1rem", margin: 0, padding: 0, flexFlow: "row nowrap", maxWidth: "100%", overflow: "auto" }}>{children}</ul>
+  );
 };
 
 export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemoveAll: () => void }) => {
   const [TabList, setTabList] = useRecoilState(TabListAtom);
   const [activeIndex, setActiveIndex] = useRecoilState(TabActiveIndex);
 
-  const { changeTabSession, removeTabSession, getSessionState, store, editorRef } = useEditorContext();
+  const { changeTabSession, removeTabSession, getSessionState, store, editorRef, monacoRef } = useEditorContext();
 
   return (
     <div style={{ display: "flex", justifyContent: "space-between", padding: "1rem 0.5rem" }}>
@@ -31,7 +33,7 @@ export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemove
             {...{ id, name }}
             active={idx === activeIndex}
             onClick={e => {
-              changeTabSession(editorRef.current, id);
+              changeTabSession(monacoRef.current, editorRef.current, id);
               setActiveIndex(idx);
               e.stopPropagation();
             }}>
@@ -50,7 +52,7 @@ export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemove
                 setActiveIndex(nextIndex);
 
                 if (activeIndex === idx) {
-                  changeTabSession(editorRef.current, tabList?.[nextIndex].id);
+                  changeTabSession(monacoRef.current, editorRef.current, tabList?.[nextIndex].id);
                 }
                 setTabList([...tabList]);
               }}>
@@ -63,7 +65,7 @@ export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemove
         onClick={() => {
           const newTab = { id: v4(), name: "tab" + (TabList?.length + 1) };
           setTabList([...TabList, newTab]);
-          changeTabSession(editorRef.current, newTab.id);
+          changeTabSession(monacoRef.current, editorRef.current, newTab.id);
           setActiveIndex(TabList.length);
         }}>
         add tab

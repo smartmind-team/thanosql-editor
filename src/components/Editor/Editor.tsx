@@ -1,10 +1,10 @@
 import { useRef, useEffect, useCallback } from "react";
-import * as monaco from "monaco-editor-core";
+import { monaco } from "@/index";
 import { setupLanguage } from "@/thanosql/setup";
 import EditorLauncher, { EditorLauncherProps } from "@/components/EditorLauncher";
 import { WorkerPaths, setWorkers } from "@/util/setWorkers";
 import { useEditorContext } from "../EditorProvider";
-import { useEffectOnce } from "@/util/useEffectOnce";
+import loader from "@monaco-editor/loader";
 
 const Editor: React.FC<EditorProps> = ({
   language = "thanosql",
@@ -17,31 +17,51 @@ const Editor: React.FC<EditorProps> = ({
   launcherProps,
   ...props
 }) => {
-  const { editorRef, isEditorLoading, sessionID, setIsEditorLoading, createTabSession, getSessionState, saveTabSession } = useEditorContext();
+  const {
+    monacoRef,
+    editorRef,
+    isEditorLoading,
+    isMonacoMounting,
+    setIsMonacoMounting,
+    sessionID,
+    setIsEditorLoading,
+    createTabSession,
+    getSessionState,
+    saveTabSession,
+  } = useEditorContext();
+
   const containerRef = useRef<HTMLDivElement>(null);
   const effectCalled = useRef<boolean>(false);
   const modelChangeEffect = useRef<monaco.IDisposable>();
 
-  useEffectOnce(() => {
-    if (editorRef.current) {
-      saveTabSession(editorRef.current);
-      editorRef.current.dispose();
-      setIsEditorLoading(true);
-    }
-  });
+  /** load monaco module */
+  useEffect(() => {
+    const cancelable = loader.init(); // get monaco-editor module from CDN
+
+    cancelable
+      .then(monaco => {
+        monacoRef.current = monaco;
+        setIsMonacoMounting(false);
+      })
+      .catch(error => error?.type !== "cancelation" && console.error("Monaco initialization: error:", error));
+
+    return () => {
+      editorRef.current ? disposeEditor() : cancelable.cancel();
+    };
+  }, []);
 
   const createEditor = useCallback(() => {
-    if (!containerRef.current || effectCalled.current) return;
+    if (!containerRef.current || !monacoRef.current) return;
 
     // presetting step
-    setupLanguage();
+    setupLanguage(monacoRef.current);
     setWorkers(workerPaths);
 
     // if current SessionID has previous store(model);
-    const model = getSessionState()?.model ?? createTabSession(sessionID, { language, value: defaultValue }).model;
+    const model = getSessionState()?.model ?? createTabSession(monacoRef.current, sessionID, { language, value: defaultValue }).model;
 
     // create monaco-editor instance
-    editorRef.current = monaco.editor.create(containerRef.current, {
+    editorRef.current = monacoRef.current.editor.create(containerRef.current, {
       model,
       minimap: { enabled: false },
       autoIndent: "full",
@@ -57,23 +77,36 @@ const Editor: React.FC<EditorProps> = ({
       lineNumbersMinChars: 0,
       detectIndentation: true,
       tabSize: 4,
-      automaticLayout: true,
+      automaticLayout: true, // responsive editor view configuration
       ...options,
     });
 
     if (getSessionState()?.state) editorRef.current.restoreViewState(getSessionState().state);
+
     setIsEditorLoading(false);
     effectCalled.current = true;
+
+    modelChangeEffect.current = editorRef.current.onDidChangeModel(e => {
+      const newModel = monacoRef.current.editor.getModel(e.newModelUrl);
+      editorRef.current.focus();
+      editorRef.current.revealLine(newModel.getLineCount());
+    });
   }, [language, defaultValue, workerPaths, options]);
 
-  useEffect(() => {
-    isEditorLoading && createEditor();
-  }, [isEditorLoading, createEditor]);
+  const disposeEditor = () => {
+    // model change effect dispose -> save current session -> editor instance dispose
+    modelChangeEffect.current?.dispose();
+    saveTabSession(editorRef.current);
+    editorRef.current?.dispose();
+    setIsEditorLoading(true);
+  };
 
   useEffect(() => {
-    modelChangeEffect.current?.dispose();
-    modelChangeEffect.current = editorRef.current?.onDidChangeModel(() => editorRef.current.focus());
-  }, []);
+    !isMonacoMounting && isEditorLoading && !effectCalled.current && createEditor();
+    return () => {
+      effectCalled.current && (effectCalled.current = false);
+    };
+  }, [isMonacoMounting, isEditorLoading, createEditor]);
 
   return (
     <div className="editor-wrapper" style={{ display: "flex", flexFlow: "column nowrap", height: "100%" }}>

@@ -8,8 +8,17 @@ import { v4 } from "uuid";
 
 function App() {
   const [testQuery, setTestQuery] = useState("");
-  const { isQueryStarting, editorRef, setIsQueryStarting, isEditorLoading, changeTabSession, refreshTabSession, getSessionState, setTabSession } =
-    useEditorContext();
+  const {
+    isQueryStarting,
+    monacoRef,
+    editorRef,
+    setIsQueryStarting,
+    isEditorLoading,
+    changeTabSession,
+    refreshTabSession,
+    getSessionState,
+    setTabSession,
+  } = useEditorContext();
   const [defaultPageHidden, setDefaultPageHidden] = useState(false);
   const { activeTab, TabList, setTabList, setActiveIndex } = useTabNavStates();
 
@@ -22,11 +31,11 @@ function App() {
   };
 
   const addStoredQueryTab = (value?: string) => {
+    setDefaultPageHidden(true);
     const newTab = { id: v4(), name: "tab" + (TabList?.length + 1) };
     setTabList([...TabList, newTab]);
-    changeTabSession(editorRef.current, newTab.id, { value });
+    changeTabSession(monacoRef.current, editorRef.current, newTab.id, { value });
     setActiveIndex(TabList.length);
-    setDefaultPageHidden(true);
   };
 
   return (

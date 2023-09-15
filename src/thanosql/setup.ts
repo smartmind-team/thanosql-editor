@@ -1,17 +1,16 @@
-import * as monacoEditor from "monaco-editor-core";
+import { monaco as Monaco } from "@/index";
 import { languageExtensionPoint, languageID, monarchLanguage } from "@/thanosql/config";
-import CompletionItemKind = monacoEditor.languages.CompletionItemKind;
 import { WorkerManager } from "@/thanosql/WorkerManager";
 import { ThanosWorker } from "@/thanosql/ThanosWorker";
 import DiagnosticsAdapter from "@/thanosql/DiagnosticsAdapter";
 import "@/thanosql/thanos.worker";
 
-export function setupLanguage(monaco: any = monacoEditor) {
+export function setupLanguage(monaco: typeof Monaco) {
   monaco.languages.register(languageExtensionPoint);
   monaco.languages.onLanguage(languageID, () => {
     monaco.languages.setMonarchTokensProvider(languageID, monarchLanguage);
     const client = new WorkerManager();
-    const worker: WorkerAccessor = (...uris: monacoEditor.Uri[]): Promise<ThanosWorker> => {
+    const worker: WorkerAccessor = (...uris: Monaco.Uri[]): Promise<ThanosWorker> => {
       return client.getLanguageServiceWorker(...uris);
     };
     //Call the errors provider
@@ -24,32 +23,32 @@ export function setupLanguage(monaco: any = monacoEditor) {
       const suggestions = [
         ...monarchLanguage.thanosqlKeywords.map((k: string) => ({
           label: k,
-          kind: CompletionItemKind.Keyword,
+          kind: monaco.languages.CompletionItemKind.Keyword,
           insertText: k,
         })),
         ...monarchLanguage.thanosqlOperators.map((k: string) => ({
           label: k,
-          kind: CompletionItemKind.Operator,
+          kind: monaco.languages.CompletionItemKind.Operator,
           insertText: k,
         })),
         ...monarchLanguage.pgKeywords.map((k: string) => ({
           label: k,
-          kind: CompletionItemKind.Function,
+          kind: monaco.languages.CompletionItemKind.Function,
           insertText: k,
         })),
         ...monarchLanguage.pgOperators.map((k: string) => ({
           label: k,
-          kind: CompletionItemKind.Function,
+          kind: monaco.languages.CompletionItemKind.Function,
           insertText: k,
         })),
         ...monarchLanguage.pgBuiltinFunctions.map((k: string) => ({
           label: k,
-          kind: CompletionItemKind.Function,
+          kind: monaco.languages.CompletionItemKind.Function,
           insertText: k,
         })),
         ...monarchLanguage.pgBuiltinVariables.map((k: string) => ({
           label: k,
-          kind: CompletionItemKind.Function,
+          kind: monaco.languages.CompletionItemKind.Function,
           insertText: k,
         })),
       ];
@@ -107,4 +106,4 @@ export function setupLanguage(monaco: any = monacoEditor) {
   });
 }
 
-export type WorkerAccessor = (...uris: monacoEditor.Uri[]) => Promise<ThanosWorker>;
+export type WorkerAccessor = (...uris: Monaco.Uri[]) => Promise<ThanosWorker>;

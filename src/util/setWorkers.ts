@@ -1,5 +1,4 @@
-import * as monaco from "monaco-editor-core";
-import ILanguageExtensionPoint = monaco.languages.ILanguageExtensionPoint;
+import { monaco } from "@/index";
 
 const workerCache = new Map();
 
@@ -35,5 +34,5 @@ export interface WorkerProperty {
 
 export interface WorkerPaths {
   default: WorkerProperty;
-  [languageID: ILanguageExtensionPoint["id"]]: WorkerProperty;
+  [languageID: monaco.languages.ILanguageExtensionPoint["id"]]: WorkerProperty;
 }

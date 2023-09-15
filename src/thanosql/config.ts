@@ -1,10 +1,8 @@
-import * as monaco from "monaco-editor-core";
-import ILanguageExtensionPoint = monaco.languages.ILanguageExtensionPoint;
-import ILanguage = monaco.languages.IMonarchLanguage;
+import { monaco } from "@/index";
 
 export const languageID = "thanosql";
 export const languageWorkerPath = "@smartmind-team/thanosql-editor@1.0.1/lib/es/thanosql/thanos.worker.js";
-export const languageExtensionPoint: ILanguageExtensionPoint = {
+export const languageExtensionPoint: monaco.languages.ILanguageExtensionPoint = {
   id: languageID,
 };
 export const conf = {
@@ -33,7 +31,7 @@ export const conf = {
   ],
 };
 
-export const monarchLanguage: ILanguage = {
+export const monarchLanguage: monaco.languages.IMonarchLanguage = {
   defaultToken: "",
   tokenPostfix: ".sql",
   ignoreCase: true,

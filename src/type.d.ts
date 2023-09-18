@@ -8,3 +8,5 @@ declare module "*.svg" {
 }
 
 declare module "*.css" {}
+
+declare module "monaco-editor/esm/vs/editor/editor.worker";

@@ -7,6 +7,6 @@ export { EditorProvider, useEditorContext, setWorkers, EditorStore };
 export default Editor;
 
 /** Monaco Module **/
-import type * as monaco from "monaco-editor/esm/vs/editor/editor.api";
+import type * as monaco from "monaco-editor";
 export { monaco };
 export type Monaco = typeof monaco;

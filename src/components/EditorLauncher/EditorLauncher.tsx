@@ -1,12 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { HTMLAttributes, useEffect, useRef, useState } from "react";
+import { Children, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { StartIcon, StopIcon } from "../Icons";
 import * as monaco from "monaco-editor-core";
 import { useEditorContext } from "../EditorProvider";
 import LoadingSpinner from "../LoadingSpinner";
 
-const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherProps) => {
+const EditorLauncher = ({ onStartQuery, onStopQuery, children, ...props }: EditorLauncherProps) => {
   const { editorRef, isQueryStarting, isQueryStopping } = useEditorContext();
   const runAction: monaco.editor.IActionDescriptor = {
     id: "runSelectedOrEntireQuery",
@@ -57,41 +57,70 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, ...props }: EditorLauncherP
 
   return (
     <div css={EditorLauncherStyle} {...props}>
-      {isQueryStopping ? (
-        <LoadingSpinner />
-      ) : (
-        onStopQuery && (
-          <span id="stop-button icon-button" onClick={() => !disabled && !isQueryStarting && onStopQuery(editorRef.current)}>
-            <StopIcon css={IconButton(disabled)} />
-          </span>
-        )
-      )}
-      {isQueryStarting ? (
-        <LoadingSpinner />
-      ) : (
-        onStartQuery && (
-          <span
-            id="start-button icon-button"
-            onClick={() => !disabled && !isQueryStopping && editorRef.current.trigger("run query", runAction.id, {})}>
-            <StartIcon css={IconButton(disabled)} />
-          </span>
-        )
-      )}
+      <div css={LauncherStatusBar}>{children}</div>
+      <div css={LauncherActionBox}>
+        {isQueryStopping ? (
+          <LoadingSpinner />
+        ) : (
+          onStopQuery && (
+            <span
+              css={IconButtonWrapper}
+              id="stop-button icon-button"
+              onClick={() => !disabled && !isQueryStarting && onStopQuery(editorRef.current)}>
+              <StopIcon css={IconButton(disabled)} />
+            </span>
+          )
+        )}
+        {isQueryStarting ? (
+          <LoadingSpinner />
+        ) : (
+          onStartQuery && (
+            <span
+              css={IconButtonWrapper}
+              id="start-button icon-button"
+              onClick={() => !disabled && !isQueryStopping && editorRef.current.trigger("run query", runAction.id, {})}>
+              <StartIcon css={IconButton(disabled)} />
+            </span>
+          )
+        )}
+      </div>
     </div>
   );
 };
 
 const EditorLauncherStyle = css`
   display: flex;
+  gap: 2rem;
   justify-content: flex-end;
   align-items: center;
-  padding: 0.75rem 1.5rem;
-  gap: 2rem;
+  padding: 0.5rem 1.5rem;
+  height: 2rem;
+`;
+
+const LauncherStatusBar = css`
+  width: 100%;
+  height: 100%;
+`;
+
+const LauncherActionBox = css`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const IconButtonWrapper = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
 `;
 
 const IconButton = (disabled = false) => css`
   opacity: ${disabled ? 0.5 : 1};
   cursor: default;
+  vertical-align: middle;
   ${!disabled &&
   `&:hover {
     cursor: pointer;

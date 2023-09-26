@@ -93,13 +93,12 @@ const EditorLauncherStyle = css`
   gap: 2em;
   justify-content: flex-end;
   align-items: center;
-  padding: 0.5rem 1.5em;
-  height: 2em;
+  padding: 0 1.5em;
+  height: 3em;
 `;
 
 const LauncherStatusBar = css`
   width: 100%;
-  height: 100%;
 `;
 
 const LauncherActionBox = css`

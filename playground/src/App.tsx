@@ -1,9 +1,8 @@
-import Editor from "@smartmind-team/thanosql-editor";
+import Editor, { EditorLauncherProps } from "@smartmind-team/thanosql-editor";
 import { useEditorContext } from "@smartmind-team/thanosql-editor";
 import { useState } from "react";
 import { TabNav, useTabNavStates } from "./TabNav";
 import { defaultTab } from "./assets/config";
-import { EditorLauncherProps } from "@smartmind-team/thanosql-editor/lib/esm/components/EditorLauncher";
 import { v4 } from "uuid";
 
 function App() {

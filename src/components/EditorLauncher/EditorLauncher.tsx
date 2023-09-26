@@ -56,7 +56,7 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, children, ...props }: Edito
   }, [editorRef.current]);
 
   return (
-    <div css={EditorLauncherStyle} {...props}>
+    <div css={EditorLauncherStyle} {...props} className="editor-launcher">
       <div css={LauncherStatusBar}>{children}</div>
       <div css={LauncherActionBox}>
         {isQueryStopping ? (
@@ -90,11 +90,11 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, children, ...props }: Edito
 
 const EditorLauncherStyle = css`
   display: flex;
-  gap: 2rem;
+  gap: 2em;
   justify-content: flex-end;
   align-items: center;
-  padding: 0.5rem 1.5rem;
-  height: 2rem;
+  padding: 0.5rem 1.5em;
+  height: 2em;
 `;
 
 const LauncherStatusBar = css`
@@ -106,15 +106,15 @@ const LauncherActionBox = css`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 1rem;
+  gap: 1em;
 `;
 
 const IconButtonWrapper = css`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.5em;
+  height: 1.5em;
 `;
 
 const IconButton = (disabled = false) => css`

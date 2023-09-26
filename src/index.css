@@ -11,3 +11,7 @@
 .monaco-editor .view-line > span > span {
   font-family: inherit;
 }
+
+.editor-launcher {
+  font-size: 16px;
+}

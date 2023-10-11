@@ -1,3 +1,4 @@
+import "../../index.css";
 import { useRef, useEffect, useCallback } from "react";
 import * as monaco from "monaco-editor-core";
 import { setupLanguage } from "@/thanosql/setup";

@@ -1,15 +1,13 @@
-import Editor from "@smartmind-team/thanosql-editor";
+import Editor, { EditorLauncherProps } from "@smartmind-team/thanosql-editor";
 import { useEditorContext } from "@smartmind-team/thanosql-editor";
 import { useState } from "react";
 import { TabNav, useTabNavStates } from "./TabNav";
 import { defaultTab } from "./assets/config";
-import { EditorLauncherProps } from "@smartmind-team/thanosql-editor/lib/esm/components/EditorLauncher";
 import { v4 } from "uuid";
 
 function App() {
   const [testQuery, setTestQuery] = useState("");
-  const { isQueryStarting, editorRef, setIsQueryStarting, isEditorLoading, changeTabSession, refreshTabSession, getSessionState, setTabSession } =
-    useEditorContext();
+  const { editorRef, setIsQueryStarting, isEditorLoading, changeTabSession } = useEditorContext();
   const [defaultPageHidden, setDefaultPageHidden] = useState(false);
   const { activeTab, TabList, setTabList, setActiveIndex } = useTabNavStates();
 
@@ -73,6 +71,12 @@ function App() {
               }}
               launcherProps={{
                 onStartQuery: handleStart,
+                onStopQuery: () => console.log("stop"),
+                children: (
+                  <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", height: "100%" }}>
+                    <>test action</>
+                  </div>
+                ),
               }}
               defaultValue={"-- default value"}
             />

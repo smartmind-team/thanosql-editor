@@ -17,8 +17,8 @@ const spin = keyframes`
 
 const loaderStyle = css`
   position: relative;
-  width: 1rem;
-  height: 1rem;
+  width: 1em;
+  height: 1em;
   border: 1px solid transparent;
   background: #7170dd40;
   background-image: conic-gradient(#7170dd, rgba(113, 112, 221, 0.00520833), rgba(113, 112, 221, 0));
@@ -29,8 +29,8 @@ const loaderStyle = css`
   &::after {
     position: fixed;
     content: "";
-    width: 0.8rem;
-    height: 0.8rem;
+    width: 0.8em;
+    height: 0.8em;
     background-color: #f6f7f9;
     border-radius: 50%;
     top: 50%;

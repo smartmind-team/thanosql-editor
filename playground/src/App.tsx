@@ -1,4 +1,4 @@
-import Editor, { EditorLauncherProps } from "@smartmind-team/thanosql-editor";
+import Editor, { EditorLauncherProps, useEditorRefs } from "@smartmind-team/thanosql-editor";
 import { useEditorContext } from "@smartmind-team/thanosql-editor";
 import { useState } from "react";
 import { TabNav, useTabNavStates } from "./TabNav";
@@ -7,26 +7,29 @@ import { v4 } from "uuid";
 
 function App() {
   const [testQuery, setTestQuery] = useState("");
-  const { editorRef, setIsQueryStarting, isEditorLoading, changeTabSession } = useEditorContext();
   const [defaultPageHidden, setDefaultPageHidden] = useState(false);
-  const { activeTab, TabList, setTabList, setActiveIndex } = useTabNavStates();
+  const { activeTab, TabList, setTabList, setActiveIndex, activeIndex } = useTabNavStates();
+  const { editorRefs, changeTabSession } = useEditorContext();
 
   const handleStart: EditorLauncherProps["onStartQuery"] = (selectededitor, targetValue) => {
-    setIsQueryStarting(true);
+    editorRefs?.current["example"].setIsQueryStarting(true);
     const queryValue = selectededitor?.getValue();
     console.log("entire query:\n", queryValue, "\nselection query:\n", targetValue);
     console.log(activeTab);
-    setTimeout(() => setIsQueryStarting(false), 2000);
+    setTimeout(() => editorRefs?.current["example"].setIsQueryStarting(false), 2000);
   };
 
   const addStoredQueryTab = (value?: string) => {
+    const editor = editorRefs?.current["example"].getEditor();
+    if (!editor) return;
+
     const newTab = { id: v4(), name: "tab" + (TabList?.length + 1) };
     setTabList([...TabList, newTab]);
-    changeTabSession(editorRef.current, newTab.id, { value });
+
+    changeTabSession(editor, TabList[activeIndex].id, newTab.id, { value });
     setActiveIndex(TabList.length);
     setDefaultPageHidden(true);
   };
-
   return (
     <div
       className="App"
@@ -44,18 +47,23 @@ function App() {
           setDefaultPageHidden(!defaultPageHidden);
           if (TabList.length === 0) {
             setTabList([...TabList, defaultTab]);
-            // setTabSession(defaultTab.id, { value: "--default value" });
-            // refreshTabSession(defaultTab.id);
           }
         }}>
         toggle
       </button>
       {defaultPageHidden && (
         <>
-          {!isEditorLoading && !!editorRef.current && <TabNav defaultTabList={[defaultTab]} onRemoveAll={() => setDefaultPageHidden(false)} />}
+          {/* {!modules.isEditorLoading && !!modules.editorRef && (
+            <TabNav defaultTabList={[defaultTab]} onRemoveAll={() => setDefaultPageHidden(false)} />
+          )} */}
 
-          <div style={{ flex: 2 }}>
+          <div style={{ flex: 2, display: "flex" }}>
             <Editor
+              // ref={(ref: any) => {
+              //   if (editorRefs) editorRefs.current["example"] = ref;
+              // }}
+              editorId="example"
+              defaultSessionId={defaultTab.id}
               language="thanosql"
               workerPaths={{
                 default: {
@@ -79,6 +87,15 @@ function App() {
                 ),
               }}
               defaultValue={"-- default value"}
+            />
+            <Editor
+              editorId="readonly-example"
+              width={"100%"}
+              defaultValue={"readonly"}
+              launcherDisabled
+              options={{
+                readOnly: true,
+              }}
             />
           </div>
         </>

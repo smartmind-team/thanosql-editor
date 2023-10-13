@@ -6,12 +6,12 @@ import { EditorProvider, EditorStore } from "@smartmind-team/thanosql-editor";
 import { RecoilRoot } from "recoil";
 import { defaultTab } from "./assets/config";
 
-const store = new EditorStore(defaultTab.id);
+// const store = new EditorStore();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <RecoilRoot>
-      <EditorProvider store={store}>
+      <EditorProvider>
         <Suspense fallback={<>suspense fallback</>}>
           <App />
         </Suspense>

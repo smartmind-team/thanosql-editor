@@ -1,13 +1,27 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { Children, HTMLAttributes, useEffect, useRef, useState } from "react";
+import { Dispatch, HTMLAttributes, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { StartIcon, StopIcon } from "../Icons";
 import * as monaco from "monaco-editor-core";
-import { useEditorContext } from "../EditorProvider";
 import LoadingSpinner from "../LoadingSpinner";
 
-const EditorLauncher = ({ onStartQuery, onStopQuery, children, ...props }: EditorLauncherProps) => {
-  const { editorRef, isQueryStarting, isQueryStopping } = useEditorContext();
+const EditorLauncher = forwardRef<EditorLauncherModule, EditorLauncherProps>(({ onStartQuery, onStopQuery, editor, children, ...props }, ref) => {
+  const [isQueryStarting, setIsQueryStarting] = useState(false);
+  const [isQueryStopping, setIsQueryStopping] = useState(false);
+
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        isQueryStarting: () => isQueryStarting,
+        setIsQueryStarting,
+        isQueryStopping: () => isQueryStopping,
+        setIsQueryStopping,
+      };
+    },
+    [],
+  );
+
   const runAction: monaco.editor.IActionDescriptor = {
     id: "runSelectedOrEntireQuery",
     label: "Run (selected) query",
@@ -32,28 +46,28 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, children, ...props }: Edito
     if (actionRegistration.current) {
       actionRegistration.current.dispose();
     }
-    actionRegistration.current = editorRef.current.addAction({ ...runAction });
+    actionRegistration.current = editor.addAction({ ...runAction });
   };
   useEffect(() => {
     switchAction();
   }, [onStartQuery]);
 
   /** It's for being disable launcher menu when editor has no contents. */
-  const [disabled, setDisabled] = useState(!editorRef.current.getValue());
+  const [disabled, setDisabled] = useState(!editor.getValue());
   useEffect(() => {
-    let modelContentChangeListener = editorRef.current.onDidChangeModelContent(() => {
-      const value = editorRef.current.getValue();
+    let modelContentChangeListener = editor.onDidChangeModelContent(() => {
+      const value = editor.getValue();
       setDisabled(!value);
     });
-    let modelChangeListener = editorRef.current.onDidChangeModel(() => {
-      const value = editorRef.current.getValue();
+    let modelChangeListener = editor.onDidChangeModel(() => {
+      const value = editor.getValue();
       setDisabled(!value);
     });
     return () => {
       modelContentChangeListener.dispose();
       modelChangeListener.dispose();
     };
-  }, [editorRef.current]);
+  }, [editor]);
 
   return (
     <div css={EditorLauncherStyle} {...props} className="editor-launcher">
@@ -63,10 +77,7 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, children, ...props }: Edito
           <LoadingSpinner />
         ) : (
           onStopQuery && (
-            <span
-              css={IconButtonWrapper}
-              id="stop-button icon-button"
-              onClick={() => !disabled && !isQueryStarting && onStopQuery(editorRef.current)}>
+            <span css={IconButtonWrapper} id="stop-button icon-button" onClick={() => !disabled && !isQueryStarting && onStopQuery(editor)}>
               <StopIcon css={IconButton(disabled)} />
             </span>
           )
@@ -78,7 +89,7 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, children, ...props }: Edito
             <span
               css={IconButtonWrapper}
               id="start-button icon-button"
-              onClick={() => !disabled && !isQueryStopping && editorRef.current.trigger("run query", runAction.id, {})}>
+              onClick={() => !disabled && !isQueryStopping && editor.trigger("run query", runAction.id, {})}>
               <StartIcon css={IconButton(disabled)} />
             </span>
           )
@@ -86,7 +97,7 @@ const EditorLauncher = ({ onStartQuery, onStopQuery, children, ...props }: Edito
       </div>
     </div>
   );
-};
+});
 
 const EditorLauncherStyle = css`
   display: flex;
@@ -130,10 +141,18 @@ const IconButton = (disabled = false) => css`
 export interface EditorLauncherProps extends HTMLAttributes<HTMLDivElement> {
   onStartQuery?: EditorLauncherEventHandler;
   onStopQuery?: EditorLauncherEventHandler;
+  editor?: monaco.editor.IStandaloneCodeEditor;
 }
 
 export type EditorLauncherEventHandler = {
   method(editor?: monaco.editor.ICodeEditor, targetValue?: string, ...args: unknown[]): void;
 }["method"];
+
+export interface EditorLauncherModule {
+  isQueryStarting: () => boolean;
+  setIsQueryStarting: Dispatch<boolean>;
+  isQueryStopping: () => boolean;
+  setIsQueryStopping: Dispatch<boolean>;
+}
 
 export default EditorLauncher;

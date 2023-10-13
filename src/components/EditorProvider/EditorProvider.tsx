@@ -1,104 +1,39 @@
-import * as monaco from "monaco-editor-core";
-import { createContext, useContext, ReactNode, useState, Dispatch, SetStateAction, useRef, MutableRefObject } from "react";
-import EditorStore from "./EditorStore";
+import { createContext, useContext, ReactNode, useRef, MutableRefObject, createRef, Children } from "react";
+import editorStore, { EditorStore, EditorStoreManager } from "./EditorStore";
+import { EditorModule } from "../Editor/Editor";
 
-const EditorContext = createContext<EditorContextState | null>(null);
+const EditorContext = createContext<EditorContextState>({
+  ...editorStore,
+  ...EditorStoreManager,
+});
 
 export const useEditorContext = () => {
-  const {
-    store,
-    editorRef,
-    sessionID,
-    isQueryStarting,
-    isQueryStopping,
-    isEditorLoading,
-    setSessionID,
-    getSessionState,
-    setTabSession,
-    createTabSession,
-    changeTabSession,
-    removeTabSession,
-    saveTabSession,
-    refreshTabSession,
-    setIsQueryStarting,
-    setIsQueryStopping,
-    setIsEditorLoading,
-  } = useContext(EditorContext) ?? {};
-  return {
-    store,
-    editorRef,
-    sessionID,
-    isQueryStarting,
-    isQueryStopping,
-    isEditorLoading,
-    setSessionID,
-    getSessionState,
-    setTabSession,
-    createTabSession,
-    changeTabSession,
-    removeTabSession,
-    saveTabSession,
-    refreshTabSession,
-    setIsQueryStarting,
-    setIsQueryStopping,
-    setIsEditorLoading,
-  };
+  const editorContext = useContext(EditorContext);
+  return editorContext;
 };
 
-const EditorProvider: React.FC<EditorProviderProps> = ({ children, defaultState, store }) => {
-  const {
-    isQueryStarting: defaultIsQueryStarting,
-    isQueryStopping: defaultIsQueryStopping,
-    isEditorLoading: defaultIsEditorLoading,
-  } = defaultState ?? {};
-
-  // state can affect re-render all of provider's chlidren
-  const [isQueryStarting, setIsQueryStarting] = useState(defaultIsQueryStarting ?? false);
-  const [isQueryStopping, setIsQueryStopping] = useState(defaultIsQueryStopping ?? false);
-  const [isEditorLoading, setIsEditorLoading] = useState(defaultIsEditorLoading ?? true);
-  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null);
+const EditorProvider: React.FC<EditorProviderProps> = ({ children, store }) => {
+  const newStore = store ?? new EditorStore();
+  const editorRefs = useRef<Record<string, EditorModule>>({});
 
   return (
     <EditorContext.Provider
       value={{
-        store: store,
-        editorRef,
-        sessionID: store.sessionID,
-        isQueryStarting,
-        isQueryStopping,
-        isEditorLoading,
-        setSessionID: store.setSessionID,
-        getSessionState: store.getSessionState,
-        setTabSession: store.setTabSession,
-        createTabSession: store.createTabSession,
-        changeTabSession: store.changeTabSession,
-        removeTabSession: store.removeTabSession,
-        saveTabSession: store.saveTabSession,
-        refreshTabSession: store.refreshTabSession,
-        setIsQueryStarting,
-        setIsQueryStopping,
-        setIsEditorLoading,
+        ...newStore,
+        ...EditorStoreManager,
+        editorRefs,
       }}>
       {children}
     </EditorContext.Provider>
   );
 };
 
-export interface EditorContextState extends Omit<InstanceType<typeof EditorStore>, "#store"> {
-  store: EditorStore;
-  editorRef: MutableRefObject<monaco.editor.IStandaloneCodeEditor>;
-  // storage for session's model, state, and something...
-  isQueryStarting?: boolean;
-  isQueryStopping?: boolean;
-  isEditorLoading?: boolean;
-  setIsQueryStarting?: Dispatch<SetStateAction<boolean>>;
-  setIsQueryStopping?: Dispatch<SetStateAction<boolean>>;
-  setIsEditorLoading?: Dispatch<SetStateAction<boolean>>;
+export interface EditorContextState extends Omit<InstanceType<typeof EditorStore>, "#store">, InstanceType<typeof EditorStoreManager> {
+  editorRefs?: MutableRefObject<Record<string, EditorModule>>;
 }
 
 export interface EditorProviderProps {
-  store: EditorStore;
-  defaultState?: Partial<Omit<EditorContextState, "editor">>;
+  store?: EditorStore;
   children?: ReactNode;
 }
 

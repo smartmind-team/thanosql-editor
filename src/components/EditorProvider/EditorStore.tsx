@@ -1,25 +1,49 @@
 import * as monaco from "monaco-editor-core";
 import { v4 } from "uuid";
 
-class EditorStore {
-  sessionID: string;
-  #store: Map<string, EditorDefaultStore & Record<string, unknown>>;
-
-  constructor(sessionID = v4(), store = new Map<string, EditorDefaultStore & Record<string, unknown>>()) {
-    this.sessionID = sessionID;
-    this.#store = store;
-  }
-
-  setSessionID = (sessionID: string) => {
-    this.sessionID = sessionID;
+export class EditorStoreManager {
+  public static entireStore = new Map<string, EditorStore>();
+  static getAllStoreKeys = () => {
+    const keys = [];
+    const keyIter = this.entireStore.keys();
+    let key = keyIter.next().value;
+    while (key) {
+      keys.push(key);
+      key = keyIter.next().value;
+    }
+    return keys;
   };
 
-  getSessionState = (sessionID = this.sessionID) => {
+  static getEditorStore = (key: string) => {
+    return this.entireStore.get(key);
+  };
+
+  static setEditorStore = (key: string, store: EditorStore) => {
+    this.entireStore.set(key, store);
+  };
+
+  static createModel = (newSessionStore?: CreateSessionOptions) => {
+    const model = monaco.editor.createModel(newSessionStore?.value ?? "", newSessionStore?.language ?? "thanosql");
+    return model;
+  };
+}
+export class EditorStore {
+  key: string; // unique key for distinguishing store.
+  #store: Map<string, EditorDefaultStore & Record<string, unknown>>;
+
+  constructor(store = new Map<string, EditorDefaultStore & Record<string, unknown>>(), key = v4()) {
+    this.#store = store;
+    this.key = key;
+    EditorStoreManager.setEditorStore(key, this);
+  }
+
+  getSessionState = (sessionID: string) => {
     return this.#store.get(sessionID);
   };
 
-  setTabSession = (sessionID: string, newSessionStore?: CreateSessionOptions) => {
-    const model = monaco.editor.createModel(newSessionStore?.value ?? "", newSessionStore?.language ?? "thanosql");
+  setTabSession = (sessionID: string, model: monaco.editor.ITextModel) => {
+    if (!sessionID || !model) return;
+
     const lineNumber = model.getLineCount();
     const position = { column: model.getLineMaxColumn(lineNumber), lineNumber };
     const state: monaco.editor.ICodeEditorViewState = {
@@ -42,32 +66,41 @@ class EditorStore {
   };
 
   createTabSession = (sessionID: string, options?: CreateSessionOptions) => {
+    if (!sessionID) return;
     if (!this.#store.has(sessionID)) {
-      this.setTabSession(sessionID, options);
+      this.setTabSession(sessionID, EditorStoreManager.createModel(options));
     }
     return this.#store.get(sessionID);
   };
 
-  changeTabSession = (editor: monaco.editor.IStandaloneCodeEditor, desiredTabSessionID: string, options?: CreateSessionOptions) => {
-    this.saveTabSession(editor);
-    this.setSessionID(desiredTabSessionID);
+  changeTabSession = (
+    editor: monaco.editor.IStandaloneCodeEditor,
+    currentTabSessionId: string,
+    nextTabSessionId: string,
+    options?: CreateSessionOptions,
+  ) => {
+    if (!currentTabSessionId || !nextTabSessionId) return;
+    this.saveTabSession(editor, currentTabSessionId);
 
     // If the desired TabSessionID does not exist, create new one.
-    if (!this.#store.has(desiredTabSessionID)) this.createTabSession(desiredTabSessionID, options);
-    this.refreshTabSession(editor, desiredTabSessionID);
+    if (!this.#store.has(nextTabSessionId)) this.createTabSession(nextTabSessionId, options);
+    this.refreshTabSession(editor, nextTabSessionId);
   };
 
   removeTabSession = (sessionID: string) => {
+    if (!sessionID) return;
     this.#store.delete(sessionID);
     return this.#store.has(sessionID);
   };
 
-  saveTabSession = (editor: monaco.editor.IStandaloneCodeEditor, sessionID = this.sessionID) => {
+  saveTabSession = (editor: monaco.editor.IStandaloneCodeEditor, sessionID: string) => {
+    if (!sessionID) return;
     const currentState = editor.saveViewState();
     if (this.#store.has(sessionID)) this.#store.set(sessionID, { ...this.#store.get(sessionID), state: currentState });
   };
 
-  refreshTabSession = (editor: monaco.editor.IStandaloneCodeEditor, sessionID = this.sessionID) => {
+  refreshTabSession = (editor: monaco.editor.IStandaloneCodeEditor, sessionID: string) => {
+    if (!sessionID) return;
     const { model, state } = this.#store.get(sessionID);
     editor.setModel(model);
     editor.restoreViewState(state);
@@ -76,8 +109,8 @@ class EditorStore {
   };
 }
 
-export default EditorStore;
-
+const editorStore = new EditorStore();
+export default editorStore;
 export interface EditorDefaultStore {
   model: monaco.editor.ITextModel;
   state: monaco.editor.ICodeEditorViewState;

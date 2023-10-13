@@ -19,9 +19,8 @@ export const TabContainer = ({ children }: ComponentProps<"ul">) => {
 export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemoveAll: () => void }) => {
   const [TabList, setTabList] = useRecoilState(TabListAtom);
   const [activeIndex, setActiveIndex] = useRecoilState(TabActiveIndex);
-
-  const { changeTabSession, removeTabSession, getSessionState, store, editorRef } = useEditorContext();
-
+  const { editorRefs } = useEditorContext();
+  const modules = editorRefs?.current["example"];
   return (
     <div style={{ display: "flex", justifyContent: "space-between", padding: "1rem 0.5rem" }}>
       <TabContainer>
@@ -31,7 +30,7 @@ export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemove
             {...{ id, name }}
             active={idx === activeIndex}
             onClick={e => {
-              changeTabSession(editorRef.current, id);
+              modules.changeTabSession(TabList[activeIndex].id, id);
               setActiveIndex(idx);
               e.stopPropagation();
             }}>
@@ -44,13 +43,13 @@ export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemove
                 e.stopPropagation();
                 const tabList = [...TabList];
                 tabList.splice(idx, 1);
-                removeTabSession(id);
+                modules.removeTabSession(id);
 
                 const nextIndex = idx < activeIndex || activeIndex === TabList.length - 1 ? activeIndex - 1 : activeIndex;
                 setActiveIndex(nextIndex);
 
                 if (activeIndex === idx) {
-                  changeTabSession(editorRef.current, tabList?.[nextIndex].id);
+                  modules.changeTabSession(tabList[activeIndex].id, tabList?.[nextIndex].id);
                 }
                 setTabList([...tabList]);
               }}>
@@ -63,7 +62,7 @@ export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemove
         onClick={() => {
           const newTab = { id: v4(), name: "tab" + (TabList?.length + 1) };
           setTabList([...TabList, newTab]);
-          changeTabSession(editorRef.current, newTab.id);
+          modules.changeTabSession(TabList[activeIndex].id, newTab.id);
           setActiveIndex(TabList.length);
         }}>
         add tab

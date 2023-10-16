@@ -19,8 +19,10 @@ export const TabContainer = ({ children }: ComponentProps<"ul">) => {
 export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemoveAll: () => void }) => {
   const [TabList, setTabList] = useRecoilState(TabListAtom);
   const [activeIndex, setActiveIndex] = useRecoilState(TabActiveIndex);
-  const { editorRefs } = useEditorContext();
-  const modules = editorRefs?.current["example"];
+  const { editorRefs, getEditorModules } = useEditorContext();
+  const modules = getEditorModules("example");
+  const { changeTabSession } = getEditorModules("example");
+  console.log(modules);
   return (
     <div style={{ display: "flex", justifyContent: "space-between", padding: "1rem 0.5rem" }}>
       <TabContainer>
@@ -30,7 +32,7 @@ export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemove
             {...{ id, name }}
             active={idx === activeIndex}
             onClick={e => {
-              modules.changeTabSession(TabList[activeIndex].id, id);
+              changeTabSession(TabList[activeIndex].id, id);
               setActiveIndex(idx);
               e.stopPropagation();
             }}>

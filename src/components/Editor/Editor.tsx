@@ -121,15 +121,15 @@ const Editor = forwardRef<EditorModule, EditorProps>(
 
     useEffect(() => {
       setEditorRef();
-      return () => {
-        editorRefs && delete editorRefs.current?.[editorId];
-        setActiveEditors(new Set(Object.keys(editorRefs.current)));
-      };
     }, [defaultSessionId]);
 
     useEffect(() => {
       modelChangeEffect.current?.dispose();
       modelChangeEffect.current = editorRef.current?.onDidChangeModel(() => editorRef.current.focus());
+      return () => {
+        editorRefs && delete editorRefs.current?.[editorId];
+        setActiveEditors(new Set(Object.keys(editorRefs.current)));
+      };
     }, []);
 
     return (

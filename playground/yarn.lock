@@ -299,7 +299,7 @@
     picomatch "^2.3.1"
 
 "@smartmind-team/thanosql-editor@../":
-  version "1.1.4-alpha.2"
+  version "1.1.4-alpha.3"
   resolved "file:.."
   dependencies:
     "@emotion/react" "^11.10.6"

@@ -1,11 +1,8 @@
-import { createContext, useContext, ReactNode, useRef, MutableRefObject, createRef, Children } from "react";
+import { createContext, useContext, ReactNode, useRef, MutableRefObject, useCallback, useState, Dispatch, SetStateAction } from "react";
 import editorStore, { EditorStore, EditorStoreManager } from "./EditorStore";
 import { EditorModule } from "../Editor/Editor";
 
-const EditorContext = createContext<EditorContextState>({
-  ...editorStore,
-  ...EditorStoreManager,
-});
+const EditorContext = createContext<EditorContextState>(null);
 
 export const useEditorContext = () => {
   const editorContext = useContext(EditorContext);
@@ -13,8 +10,18 @@ export const useEditorContext = () => {
 };
 
 const EditorProvider: React.FC<EditorProviderProps> = ({ children, store }) => {
-  const newStore = store ?? new EditorStore();
+  const newStore = store ?? editorStore;
   const editorRefs = useRef<Record<string, EditorModule>>({});
+  const [activeEditors, _setActiveEditors] = useState<Set<string>>(new Set());
+
+  const setActiveEditors = (value: SetStateAction<Set<string>>) => {
+    const newActiveEditors = value instanceof Set ? value : value(activeEditors);
+    if (activeEditors.size === newActiveEditors.size) return;
+    _setActiveEditors(newActiveEditors);
+  };
+
+  const isEditorReady = useCallback((editorId: string) => !!editorRefs.current[editorId], [activeEditors]);
+  const getEditorModules = useCallback((editorId: string) => editorRefs.current[editorId], [activeEditors]);
 
   return (
     <EditorContext.Provider
@@ -22,6 +29,10 @@ const EditorProvider: React.FC<EditorProviderProps> = ({ children, store }) => {
         ...newStore,
         ...EditorStoreManager,
         editorRefs,
+        isEditorReady,
+        activeEditors,
+        setActiveEditors,
+        getEditorModules,
       }}>
       {children}
     </EditorContext.Provider>
@@ -29,7 +40,11 @@ const EditorProvider: React.FC<EditorProviderProps> = ({ children, store }) => {
 };
 
 export interface EditorContextState extends Omit<InstanceType<typeof EditorStore>, "#store">, InstanceType<typeof EditorStoreManager> {
-  editorRefs?: MutableRefObject<Record<string, EditorModule>>;
+  editorRefs: MutableRefObject<Record<string, EditorModule>>;
+  isEditorReady: (editorId: string) => boolean;
+  activeEditors: Set<string>;
+  setActiveEditors: Dispatch<SetStateAction<Set<string>>>;
+  getEditorModules: (editorId: string) => EditorModule;
 }
 
 export interface EditorProviderProps {

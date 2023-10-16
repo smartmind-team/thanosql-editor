@@ -1,7 +1,7 @@
-import Editor, { EditorLauncherProps, useEditorRefs } from "@smartmind-team/thanosql-editor";
+import Editor, { EditorLauncherProps } from "@smartmind-team/thanosql-editor";
 import { useEditorContext } from "@smartmind-team/thanosql-editor";
 import { useState } from "react";
-import { TabNav, useTabNavStates } from "./TabNav";
+import { useTabNavStates } from "./TabNav";
 import { defaultTab } from "./assets/config";
 import { v4 } from "uuid";
 
@@ -9,14 +9,14 @@ function App() {
   const [testQuery, setTestQuery] = useState("");
   const [defaultPageHidden, setDefaultPageHidden] = useState(false);
   const { activeTab, TabList, setTabList, setActiveIndex, activeIndex } = useTabNavStates();
-  const { editorRefs, changeTabSession } = useEditorContext();
-
+  const { editorRefs, isEditorReady, activeEditors, getEditorModules } = useEditorContext();
+  const { changeTabSession, setIsQueryStarting } = getEditorModules("example") ?? {};
   const handleStart: EditorLauncherProps["onStartQuery"] = (selectededitor, targetValue) => {
-    editorRefs?.current["example"].setIsQueryStarting(true);
+    setIsQueryStarting(true);
     const queryValue = selectededitor?.getValue();
     console.log("entire query:\n", queryValue, "\nselection query:\n", targetValue);
     console.log(activeTab);
-    setTimeout(() => editorRefs?.current["example"].setIsQueryStarting(false), 2000);
+    setTimeout(() => editorRefs.current["example"].setIsQueryStarting(false), 2000);
   };
 
   const addStoredQueryTab = (value?: string) => {
@@ -26,7 +26,7 @@ function App() {
     const newTab = { id: v4(), name: "tab" + (TabList?.length + 1) };
     setTabList([...TabList, newTab]);
 
-    changeTabSession(editor, TabList[activeIndex].id, newTab.id, { value });
+    changeTabSession(TabList[activeIndex].id, newTab.id, { value });
     setActiveIndex(TabList.length);
     setDefaultPageHidden(true);
   };
@@ -51,55 +51,56 @@ function App() {
         }}>
         toggle
       </button>
-      {defaultPageHidden && (
-        <>
-          {/* {!modules.isEditorLoading && !!modules.editorRef && (
+
+      {/* {!modules.isEditorLoading && !!modules.editorRef && (
             <TabNav defaultTabList={[defaultTab]} onRemoveAll={() => setDefaultPageHidden(false)} />
           )} */}
 
-          <div style={{ flex: 2, display: "flex" }}>
-            <Editor
-              // ref={(ref: any) => {
-              //   if (editorRefs) editorRefs.current["example"] = ref;
-              // }}
-              editorId="example"
-              defaultSessionId={defaultTab.id}
-              language="thanosql"
-              workerPaths={{
-                default: {
-                  url: "../node_modules/monaco-editor-core/esm/vs/editor/editor.worker.js",
-                  base: window.location.href,
-                  isModule: true,
-                },
-                thanosql: {
-                  url: "../node_modules/@smartmind-team/thanosql-editor/lib/esm/thanosql/thanos.worker.js",
-                  base: window.location.href,
-                  isModule: true,
-                },
-              }}
-              launcherProps={{
-                onStartQuery: handleStart,
-                onStopQuery: () => console.log("stop"),
-                children: (
-                  <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", height: "100%" }}>
-                    <>test action</>
-                  </div>
-                ),
-              }}
-              defaultValue={"-- default value"}
-            />
-            <Editor
-              editorId="readonly-example"
-              width={"100%"}
-              defaultValue={"readonly"}
-              launcherDisabled
-              options={{
-                readOnly: true,
-              }}
-            />
-          </div>
-        </>
-      )}
+      <div style={{ flex: 2, display: "flex" }}>
+        {defaultPageHidden && (
+          <Editor
+            // ref={(ref: any) => {
+            //   if (editorRefs) editorRefs.current["example"] = ref;
+            // }}
+            editorId="example"
+            defaultSessionId={defaultTab.id}
+            language="thanosql"
+            workerPaths={{
+              default: {
+                url: "../node_modules/monaco-editor-core/esm/vs/editor/editor.worker.js",
+                base: window.location.href,
+                isModule: true,
+              },
+              thanosql: {
+                url: "../node_modules/@smartmind-team/thanosql-editor/lib/esm/thanosql/thanos.worker.js",
+                base: window.location.href,
+                isModule: true,
+              },
+            }}
+            launcherProps={{
+              onStartQuery: handleStart,
+              onStopQuery: () => console.log("stop"),
+              children: (
+                <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", height: "100%" }}>
+                  <>test action</>
+                </div>
+              ),
+            }}
+            defaultValue={"-- default value"}
+          />
+        )}
+        <Editor
+          editorId="readonly-example"
+          width={"100%"}
+          defaultValue={"readonly"}
+          launcherProps={{
+            onStartQuery: editor => console.log(editor?.setValue("is starting...")),
+          }}
+          options={{
+            readOnly: true,
+          }}
+        />
+      </div>
     </div>
   );
 }

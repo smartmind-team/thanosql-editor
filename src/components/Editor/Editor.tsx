@@ -1,5 +1,5 @@
 import "../../index.css";
-import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useState, Dispatch } from "react";
+import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useState, Dispatch, createRef } from "react";
 import * as monaco from "monaco-editor-core";
 import { setupLanguage as setThanoSQL } from "@/thanosql/setup";
 import EditorLauncher, { EditorLauncherProps } from "@/components/EditorLauncher";
@@ -27,11 +27,10 @@ const Editor = forwardRef<EditorModule, EditorProps>(
     },
     ref,
   ) => {
-    const { editorRefs, ...store } = useEditorContext();
-
-    const launcherRef = useRef<EditorLauncherModule>(null);
-    const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null);
-    const containerRef = useRef<HTMLDivElement>(null);
+    const { editorRefs, activeEditors, setActiveEditors, ...store } = useEditorContext();
+    const launcherRef = useRef<EditorLauncherModule>();
+    const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
+    const containerRef = useRef<HTMLDivElement>();
     const effectCalled = useRef<boolean>(false);
     const modelChangeEffect = useRef<monaco.IDisposable>();
 
@@ -56,11 +55,7 @@ const Editor = forwardRef<EditorModule, EditorProps>(
       setIsEditorLoading: next => setIsEditorLoading(next),
     };
 
-    const setEditorRef = useCallback(() => {
-      if (editorRefs) editorRefs.current[editorId] = modules;
-    }, [editorId]);
-
-    useImperativeHandle(ref, () => modules, [store]);
+    useImperativeHandle(ref, () => modules, [store, editorId]);
 
     useEffectOnce(() => {
       // presetting step
@@ -111,6 +106,12 @@ const Editor = forwardRef<EditorModule, EditorProps>(
       effectCalled.current = true;
     }, [language, defaultValue, workerPaths, options]);
 
+    const setEditorRef = useCallback(() => {
+      editorRefs.current[editorId] = modules;
+      const newActiveEditors = Object.keys(editorRefs.current);
+      setActiveEditors(prev => new Set([...prev, ...newActiveEditors]));
+    }, [editorId]);
+
     useEffect(() => {
       isEditorLoading && createEditor();
     }, [isEditorLoading, createEditor]);
@@ -121,6 +122,7 @@ const Editor = forwardRef<EditorModule, EditorProps>(
       modelChangeEffect.current = editorRef.current?.onDidChangeModel(() => editorRef.current.focus());
       return () => {
         editorRefs && delete editorRefs.current?.[editorId];
+        setActiveEditors(new Set(Object.keys(editorRefs.current)));
       };
     }, []);
 

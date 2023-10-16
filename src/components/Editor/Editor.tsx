@@ -1,5 +1,5 @@
 import "../../index.css";
-import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useState, Dispatch, createRef } from "react";
+import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useState, Dispatch, createRef, useMemo } from "react";
 import * as monaco from "monaco-editor-core";
 import { setupLanguage as setThanoSQL } from "@/thanosql/setup";
 import EditorLauncher, { EditorLauncherProps } from "@/components/EditorLauncher";
@@ -36,26 +36,29 @@ const Editor = forwardRef<EditorModule, EditorProps>(
 
     const [isEditorLoading, setIsEditorLoading] = useState(true);
 
-    const modules = {
-      ...store,
-      getEditor: () => editorRef.current,
-      changeTabSession: (currentSessionId: string, nextSessionId: string, options?: CreateSessionOptions) => {
-        editorRef.current && defaultSessionId && store.changeTabSession(editorRef.current, currentSessionId, nextSessionId, options);
-      },
-      createTabSession: (...args: Parameters<typeof store.createTabSession>) => defaultSessionId && store.createTabSession(...args),
-      getSessionState: (...args: Parameters<typeof store.getSessionState>) => defaultSessionId && store.getSessionState(...args),
-      removeTabSession: (...args: Parameters<typeof store.removeTabSession>) => defaultSessionId && store.removeTabSession(...args),
-      saveTabSession: (sessionId: string) => editorRef.current && defaultSessionId && store.saveTabSession(editorRef.current, sessionId),
-      setTabSession: (...args: Parameters<typeof store.setTabSession>) => editorRef.current && defaultSessionId && store.setTabSession(...args),
-      isQueryStarting: () => launcherRef.current.isQueryStarting(),
-      setIsQueryStarting: next => launcherRef.current.setIsQueryStarting(next),
-      isQueryStopping: () => launcherRef.current.isQueryStopping(),
-      setIsQueryStopping: next => launcherRef.current.setIsQueryStopping(next),
-      isEditorLoading: () => isEditorLoading,
-      setIsEditorLoading: next => setIsEditorLoading(next),
-    };
+    const modules = useMemo(
+      () => ({
+        ...store,
+        getEditor: () => editorRef.current,
+        changeTabSession: (currentSessionId: string, nextSessionId: string, options?: CreateSessionOptions) => {
+          editorRef.current && defaultSessionId && store.changeTabSession(editorRef.current, currentSessionId, nextSessionId, options);
+        },
+        createTabSession: (...args: Parameters<typeof store.createTabSession>) => defaultSessionId && store.createTabSession(...args),
+        getSessionState: (...args: Parameters<typeof store.getSessionState>) => defaultSessionId && store.getSessionState(...args),
+        removeTabSession: (...args: Parameters<typeof store.removeTabSession>) => defaultSessionId && store.removeTabSession(...args),
+        saveTabSession: (sessionId: string) => editorRef.current && defaultSessionId && store.saveTabSession(editorRef.current, sessionId),
+        setTabSession: (...args: Parameters<typeof store.setTabSession>) => editorRef.current && defaultSessionId && store.setTabSession(...args),
+        isQueryStarting: () => launcherRef.current.isQueryStarting(),
+        setIsQueryStarting: next => launcherRef.current.setIsQueryStarting(next),
+        isQueryStopping: () => launcherRef.current.isQueryStopping(),
+        setIsQueryStopping: next => launcherRef.current.setIsQueryStopping(next),
+        isEditorLoading: () => isEditorLoading,
+        setIsEditorLoading: next => setIsEditorLoading(next),
+      }),
+      [defaultSessionId],
+    );
 
-    useImperativeHandle(ref, () => modules, [store, editorId]);
+    useImperativeHandle(ref, () => modules, [store, editorId, modules]);
 
     useEffectOnce(() => {
       // presetting step
@@ -110,7 +113,7 @@ const Editor = forwardRef<EditorModule, EditorProps>(
       editorRefs.current[editorId] = modules;
       const newActiveEditors = Object.keys(editorRefs.current);
       setActiveEditors(prev => new Set([...prev, ...newActiveEditors]));
-    }, [editorId]);
+    }, [editorId, modules]);
 
     useEffect(() => {
       isEditorLoading && createEditor();
@@ -118,12 +121,15 @@ const Editor = forwardRef<EditorModule, EditorProps>(
 
     useEffect(() => {
       setEditorRef();
-      modelChangeEffect.current?.dispose();
-      modelChangeEffect.current = editorRef.current?.onDidChangeModel(() => editorRef.current.focus());
       return () => {
         editorRefs && delete editorRefs.current?.[editorId];
         setActiveEditors(new Set(Object.keys(editorRefs.current)));
       };
+    }, [defaultSessionId]);
+
+    useEffect(() => {
+      modelChangeEffect.current?.dispose();
+      modelChangeEffect.current = editorRef.current?.onDidChangeModel(() => editorRef.current.focus());
     }, []);
 
     return (

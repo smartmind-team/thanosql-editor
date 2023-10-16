@@ -1,7 +1,7 @@
 import Editor, { EditorLauncherProps } from "@smartmind-team/thanosql-editor";
 import { useEditorContext } from "@smartmind-team/thanosql-editor";
 import { useState } from "react";
-import { useTabNavStates } from "./TabNav";
+import { useTabNavStates, TabNav } from "./TabNav";
 import { defaultTab } from "./assets/config";
 import { v4 } from "uuid";
 
@@ -10,7 +10,7 @@ function App() {
   const [defaultPageHidden, setDefaultPageHidden] = useState(false);
   const { activeTab, TabList, setTabList, setActiveIndex, activeIndex } = useTabNavStates();
   const { editorRefs, isEditorReady, activeEditors, getEditorModules } = useEditorContext();
-  const { changeTabSession, setIsQueryStarting } = getEditorModules("example") ?? {};
+  const { changeTabSession, setIsQueryStarting, isEditorLoading, getEditor } = getEditorModules("example") ?? {};
   const handleStart: EditorLauncherProps["onStartQuery"] = (selectededitor, targetValue) => {
     setIsQueryStarting(true);
     const queryValue = selectededitor?.getValue();
@@ -52,9 +52,7 @@ function App() {
         toggle
       </button>
 
-      {/* {!modules.isEditorLoading && !!modules.editorRef && (
-            <TabNav defaultTabList={[defaultTab]} onRemoveAll={() => setDefaultPageHidden(false)} />
-          )} */}
+      {isEditorReady("example") && <TabNav defaultTabList={[defaultTab]} onRemoveAll={() => setDefaultPageHidden(false)} />}
 
       <div style={{ flex: 2, display: "flex" }}>
         {defaultPageHidden && (
@@ -63,7 +61,7 @@ function App() {
             //   if (editorRefs) editorRefs.current["example"] = ref;
             // }}
             editorId="example"
-            defaultSessionId={defaultTab.id}
+            defaultSessionId={activeTab?.id ?? defaultTab.id}
             language="thanosql"
             workerPaths={{
               default: {

@@ -1,13 +1,13 @@
 import "../../index.css";
 import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useState, Dispatch, createRef, useMemo } from "react";
 import * as monaco from "monaco-editor-core";
-import { setupLanguage as setThanoSQL } from "@/thanosql/setup";
-import EditorLauncher, { EditorLauncherProps } from "@/components/EditorLauncher";
+import { setupLanguage as setThanoSQL, setupLanguage } from "@/thanosql/setup";
+import EditorLauncher, { type EditorLauncherProps, type EditorLauncherModule } from "@/components/EditorLauncher";
 import { WorkerPaths, setWorkers } from "@/util/setWorkers";
-import { useEditorContext } from "../EditorProvider";
+import { useEditorContext } from "@/editorContext";
+import { EditorSessionStore } from "@/EditorSessionStore";
 import { useEffectOnce } from "@/util/hooks/useEffectOnce";
-import { CreateSessionOptions, EditorStore, EditorStoreManager } from "../EditorProvider/EditorStore";
-import { EditorLauncherModule } from "../EditorLauncher/EditorLauncher";
+import { type CreateModelOptions, createModel, isLanguageExist } from "@/util/monaco-util";
 
 const Editor = forwardRef<EditorModule, EditorProps>(
   (
@@ -36,18 +36,18 @@ const Editor = forwardRef<EditorModule, EditorProps>(
 
     const [isEditorLoading, setIsEditorLoading] = useState(true);
 
-    const modules = useMemo(
+    const module = useMemo<EditorModule>(
       () => ({
         ...store,
         getEditor: () => editorRef.current,
-        changeTabSession: (currentSessionId: string, nextSessionId: string, options?: CreateSessionOptions) => {
-          editorRef.current && defaultSessionId && store.changeTabSession(editorRef.current, currentSessionId, nextSessionId, options);
+        changeTabSession: (...args) => {
+          editorRef.current && defaultSessionId && store.changeTabSession(editorRef.current, ...args);
         },
-        createTabSession: (...args: Parameters<typeof store.createTabSession>) => defaultSessionId && store.createTabSession(...args),
-        getSessionState: (...args: Parameters<typeof store.getSessionState>) => defaultSessionId && store.getSessionState(...args),
-        removeTabSession: (...args: Parameters<typeof store.removeTabSession>) => defaultSessionId && store.removeTabSession(...args),
-        saveTabSession: (sessionId: string) => editorRef.current && defaultSessionId && store.saveTabSession(editorRef.current, sessionId),
-        setTabSession: (...args: Parameters<typeof store.setTabSession>) => editorRef.current && defaultSessionId && store.setTabSession(...args),
+        createTabSession: (...args) => defaultSessionId && store.createTabSession(...args),
+        getSessionState: (...args) => defaultSessionId && store.getSessionState(...args),
+        removeTabSession: (...args) => defaultSessionId && store.removeTabSession(...args),
+        saveTabSession: (...args) => editorRef.current && defaultSessionId && store.saveTabSession(editorRef.current, ...args),
+        setTabSession: (...args) => editorRef.current && defaultSessionId && store.setTabSession(...args),
         isQueryStarting: () => launcherRef.current.isQueryStarting(),
         setIsQueryStarting: next => launcherRef.current.setIsQueryStarting(next),
         isQueryStopping: () => launcherRef.current.isQueryStopping(),
@@ -58,11 +58,11 @@ const Editor = forwardRef<EditorModule, EditorProps>(
       [defaultSessionId],
     );
 
-    useImperativeHandle(ref, () => modules, [store, editorId, modules]);
+    useImperativeHandle(ref, () => module, [store, editorId, module]);
 
     useEffectOnce(() => {
       // presetting step
-      setThanoSQL();
+      !isLanguageExist("thanosql") && setupLanguage();
     });
 
     useEffectOnce(() => {
@@ -79,7 +79,7 @@ const Editor = forwardRef<EditorModule, EditorProps>(
 
       const model = defaultSessionId
         ? store.getSessionState(defaultSessionId)?.model ?? store.createTabSession(defaultSessionId, { language, value: defaultValue }).model
-        : EditorStoreManager.createModel({ language, value: defaultValue });
+        : createModel({ language, value: defaultValue });
 
       const state = defaultSessionId && store.getSessionState(defaultSessionId).state;
 
@@ -110,10 +110,9 @@ const Editor = forwardRef<EditorModule, EditorProps>(
     }, [language, defaultValue, workerPaths, options]);
 
     const setEditorRef = useCallback(() => {
-      editorRefs.current[editorId] = modules;
-      const newActiveEditors = Object.keys(editorRefs.current);
-      setActiveEditors(prev => new Set([...prev, ...newActiveEditors]));
-    }, [editorId, modules]);
+      editorRefs.current[editorId] = module;
+      setActiveEditors(new Set(Object.keys(editorRefs.current)));
+    }, [editorId, module]);
 
     useEffect(() => {
       isEditorLoading && createEditor();
@@ -173,9 +172,11 @@ export interface EditorCustomProps {
 
 export type EditorProps = EditorCustomProps & React.HTMLAttributes<HTMLDivElement>;
 
-export interface EditorModule extends Omit<InstanceType<typeof EditorStore>, "#store" | "changeTabSession" | "saveTabSession">, EditorLauncherModule {
+export interface EditorModule
+  extends Omit<InstanceType<typeof EditorSessionStore>, "#store" | "changeTabSession" | "saveTabSession">,
+    EditorLauncherModule {
   getEditor: () => monaco.editor.IStandaloneCodeEditor;
-  changeTabSession: (currentSessionId: string, nextSessionId: string, options?: CreateSessionOptions) => void;
+  changeTabSession: (currentSessionId: string, nextSessionId: string, options?: CreateModelOptions) => void;
   saveTabSession: (sessionId: string) => void;
   isEditorLoading: () => boolean;
   setIsEditorLoading: Dispatch<boolean>;

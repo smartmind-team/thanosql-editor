@@ -2,16 +2,18 @@ import { StrictMode, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
-import { EditorProvider, EditorStore } from "@smartmind-team/thanosql-editor";
+import { EditorProvider, EditorSessionStore, createEditorState, createModel } from "@smartmind-team/thanosql-editor";
 import { RecoilRoot } from "recoil";
-import { defaultTab } from "./assets/config";
 
-// const store = new EditorStore();
+// To set defaultTab on EditorProvider initialization:
+import { defaultTab } from "./assets/config";
+const editorSessionStore = new EditorSessionStore();
+editorSessionStore.setTabSession(defaultTab.id, { model: createModel({ value: "-- default session!", language: "thanosql" }), state: null });
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <RecoilRoot>
-      <EditorProvider>
+      <EditorProvider store={editorSessionStore}>
         <Suspense fallback={<>suspense fallback</>}>
           <App />
         </Suspense>

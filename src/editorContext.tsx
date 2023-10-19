@@ -1,6 +1,6 @@
-import { createContext, useContext, ReactNode, useRef, MutableRefObject, useCallback, useState, Dispatch, SetStateAction } from "react";
-import editorStore, { EditorStore, EditorStoreManager } from "./EditorStore";
-import { EditorModule } from "../Editor/Editor";
+import { createContext, useContext, ReactNode, useRef, MutableRefObject, useCallback, useState, Dispatch, SetStateAction, memo } from "react";
+import { EditorSessionStore } from "./EditorSessionStore";
+import { type EditorModule } from "./components/Editor";
 
 const EditorContext = createContext<EditorContextState>(null);
 
@@ -9,8 +9,7 @@ export const useEditorContext = () => {
   return editorContext;
 };
 
-const EditorProvider: React.FC<EditorProviderProps> = ({ children, store }) => {
-  const newStore = store ?? editorStore;
+export const EditorProvider: React.FC<EditorProviderProps> = memo(({ children, store = new EditorSessionStore() }) => {
   const editorRefs = useRef<Record<string, EditorModule>>({});
   const [activeEditors, _setActiveEditors] = useState<Set<string>>(new Set());
 
@@ -26,8 +25,7 @@ const EditorProvider: React.FC<EditorProviderProps> = ({ children, store }) => {
   return (
     <EditorContext.Provider
       value={{
-        ...newStore,
-        ...EditorStoreManager,
+        ...store,
         editorRefs,
         isEditorReady,
         activeEditors,
@@ -37,9 +35,9 @@ const EditorProvider: React.FC<EditorProviderProps> = ({ children, store }) => {
       {children}
     </EditorContext.Provider>
   );
-};
+});
 
-export interface EditorContextState extends Omit<InstanceType<typeof EditorStore>, "#store">, InstanceType<typeof EditorStoreManager> {
+export interface EditorContextState extends Omit<InstanceType<typeof EditorSessionStore>, "#store"> {
   editorRefs: MutableRefObject<Record<string, EditorModule>>;
   isEditorReady: (editorId: string) => boolean;
   activeEditors: Set<string>;
@@ -48,8 +46,6 @@ export interface EditorContextState extends Omit<InstanceType<typeof EditorStore
 }
 
 export interface EditorProviderProps {
-  store?: EditorStore;
+  store?: EditorSessionStore;
   children?: ReactNode;
 }
-
-export default EditorProvider;

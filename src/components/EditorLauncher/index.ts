@@ -1,7 +1,5 @@
-import { memo, Ref, RefAttributes } from "react";
+import { memo, RefAttributes } from "react";
 
-import EditorLauncher from "./EditorLauncher";
-import type { EditorLauncherProps, EditorLauncherModule } from "./EditorLauncher";
-
-export type { EditorLauncherProps };
+import EditorLauncher, { type EditorLauncherProps, type EditorLauncherModule } from "./EditorLauncher";
 export default memo<EditorLauncherProps & RefAttributes<EditorLauncherModule>>(EditorLauncher);
+export type { EditorLauncherProps, EditorLauncherModule };

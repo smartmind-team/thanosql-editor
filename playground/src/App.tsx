@@ -30,6 +30,7 @@ function App() {
     setActiveIndex(TabList.length);
     setDefaultPageHidden(true);
   };
+
   return (
     <div
       className="App"
@@ -85,6 +86,13 @@ function App() {
               ),
             }}
             defaultValue={"-- default value"}
+            options={{
+              overviewRulerLanes: 0,
+              hideCursorInOverviewRuler: true,
+              overviewRulerBorder: false,
+              lineHeight: 16,
+              padding: { top: 8, bottom: 8 },
+            }}
           />
         )}
         <Editor

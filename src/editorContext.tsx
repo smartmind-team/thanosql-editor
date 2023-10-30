@@ -10,7 +10,7 @@ export const useEditorContext = () => {
 };
 
 export const EditorProvider: React.FC<EditorProviderProps> = memo(({ children, store = new EditorSessionStore() }) => {
-  const editorRefs = useRef<Record<string, EditorModule>>({});
+  const editorRefs = useRef<{ [id: string]: EditorModule | undefined }>({});
   const [activeEditors, _setActiveEditors] = useState<Set<string>>(new Set());
 
   const setActiveEditors = (value: SetStateAction<Set<string>>) => {
@@ -20,7 +20,7 @@ export const EditorProvider: React.FC<EditorProviderProps> = memo(({ children, s
   };
 
   const isEditorReady = useCallback((editorId: string) => !!editorRefs.current[editorId], [activeEditors]);
-  const getEditorModules = useCallback((editorId: string) => editorRefs.current[editorId], [activeEditors]);
+  const getEditorModule = useCallback((editorId: string) => editorRefs.current[editorId], [activeEditors]);
 
   return (
     <EditorContext.Provider
@@ -30,7 +30,7 @@ export const EditorProvider: React.FC<EditorProviderProps> = memo(({ children, s
         isEditorReady,
         activeEditors,
         setActiveEditors,
-        getEditorModules,
+        getEditorModule,
       }}>
       {children}
     </EditorContext.Provider>
@@ -42,7 +42,7 @@ export interface EditorContextState extends Omit<InstanceType<typeof EditorSessi
   isEditorReady: (editorId: string) => boolean;
   activeEditors: Set<string>;
   setActiveEditors: Dispatch<SetStateAction<Set<string>>>;
-  getEditorModules: (editorId: string) => EditorModule;
+  getEditorModule: (editorId: string) => EditorModule | void;
 }
 
 export interface EditorProviderProps {

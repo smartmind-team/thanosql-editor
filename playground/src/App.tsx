@@ -1,4 +1,4 @@
-import Editor, { EditorLauncherProps } from "@smartmind-team/thanosql-editor";
+import Editor, { EditorLauncherProps, EditorModule } from "@smartmind-team/thanosql-editor";
 import { useEditorContext } from "@smartmind-team/thanosql-editor";
 import { useState } from "react";
 import { useTabNavStates, TabNav } from "./TabNav";
@@ -9,13 +9,13 @@ function App() {
   const [testQuery, setTestQuery] = useState("");
   const [defaultPageHidden, setDefaultPageHidden] = useState(false);
   const { activeTab, TabList, setTabList, setActiveIndex, activeIndex } = useTabNavStates();
-  const { editorRefs, isEditorReady, activeEditors, getEditorModules } = useEditorContext();
-  const { changeTabSession, setIsQueryStarting, isEditorLoading, getEditor } = getEditorModules("example") ?? {};
+  const { editorRefs, isEditorReady, activeEditors, getEditorModule } = useEditorContext();
+  const { changeTabSession, setIsQueryStarting, isEditorLoading, getEditor, getValue } = getEditorModule("example")! ?? {};
   const handleStart: EditorLauncherProps["onStartQuery"] = (selectededitor, targetValue) => {
     setIsQueryStarting(true);
     const queryValue = selectededitor?.getValue();
     console.log("entire query:\n", queryValue, "\nselection query:\n", targetValue);
-    console.log(activeTab);
+    console.log("module get value:", getValue());
     setTimeout(() => editorRefs.current["example"].setIsQueryStarting(false), 2000);
   };
 

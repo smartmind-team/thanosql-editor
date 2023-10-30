@@ -19,9 +19,9 @@ export const TabContainer = ({ children }: ComponentProps<"ul">) => {
 export const TabNav = ({ defaultTabList, onRemoveAll }: TabNavProps & { onRemoveAll: () => void }) => {
   const [TabList, setTabList] = useRecoilState(TabListAtom);
   const [activeIndex, setActiveIndex] = useRecoilState(TabActiveIndex);
-  const { editorRefs, getEditorModules } = useEditorContext();
-  const modules = getEditorModules("example");
-  const { changeTabSession } = getEditorModules("example");
+  const { editorRefs, getEditorModule } = useEditorContext();
+  const modules = getEditorModule("example")!;
+  const { changeTabSession } = getEditorModule("example")!;
   console.log(modules);
   return (
     <div style={{ display: "flex", justifyContent: "space-between", padding: "1rem 0.5rem" }}>

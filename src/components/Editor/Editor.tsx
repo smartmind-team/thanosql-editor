@@ -1,7 +1,7 @@
 import "../../index.css";
-import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useState, Dispatch, createRef, useMemo } from "react";
+import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useState, Dispatch, useMemo } from "react";
 import * as monaco from "monaco-editor-core";
-import { setupLanguage as setThanoSQL, setupLanguage } from "@/thanosql/setup";
+import { setupLanguage as setThanoSQL } from "@/thanosql/setup";
 import EditorLauncher, { type EditorLauncherProps, type EditorLauncherModule } from "@/components/EditorLauncher";
 import { WorkerPaths, setWorkers } from "@/util/setWorkers";
 import { useEditorContext } from "@/editorContext";
@@ -40,6 +40,9 @@ const Editor = forwardRef<EditorModule, EditorProps>(
       () => ({
         ...store,
         getEditor: () => editorRef.current,
+        getValue: () => {
+          return editorRef.current && editorRef.current.getValue();
+        },
         changeTabSession: (...args) => {
           editorRef.current && defaultSessionId && store.changeTabSession(editorRef.current, ...args);
         },
@@ -62,7 +65,7 @@ const Editor = forwardRef<EditorModule, EditorProps>(
 
     useEffectOnce(() => {
       // presetting step
-      !isLanguageExist("thanosql") && setupLanguage();
+      !isLanguageExist("thanosql") && setThanoSQL();
     });
 
     useEffectOnce(() => {
@@ -175,7 +178,8 @@ export type EditorProps = EditorCustomProps & React.HTMLAttributes<HTMLDivElemen
 export interface EditorModule
   extends Omit<InstanceType<typeof EditorSessionStore>, "#store" | "changeTabSession" | "saveTabSession">,
     EditorLauncherModule {
-  getEditor: () => monaco.editor.IStandaloneCodeEditor;
+  getEditor: () => monaco.editor.IStandaloneCodeEditor | void;
+  getValue: () => string | void;
   changeTabSession: (currentSessionId: string, nextSessionId: string, options?: CreateModelOptions) => void;
   saveTabSession: (sessionId: string) => void;
   isEditorLoading: () => boolean;

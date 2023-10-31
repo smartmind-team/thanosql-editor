@@ -1,13 +1,13 @@
 import "../../index.css";
+import "@/thanosql";
 import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useState, Dispatch, useMemo } from "react";
 import * as monaco from "monaco-editor-core";
-import { setupLanguage as setThanoSQL } from "@/thanosql/setup";
 import EditorLauncher, { type EditorLauncherProps, type EditorLauncherModule } from "@/components/EditorLauncher";
 import { WorkerPaths, setWorkers } from "@/util/setWorkers";
 import { useEditorContext } from "@/editorContext";
 import { EditorSessionStore } from "@/EditorSessionStore";
 import { useEffectOnce } from "@/util/hooks/useEffectOnce";
-import { type CreateModelOptions, createModel, isLanguageExist } from "@/util/monaco-util";
+import { type CreateModelOptions, createModel } from "@/util/monaco-util";
 
 const Editor = forwardRef<EditorModule, EditorProps>(
   (
@@ -62,11 +62,6 @@ const Editor = forwardRef<EditorModule, EditorProps>(
     );
 
     useImperativeHandle(ref, () => module, [store, editorId, module]);
-
-    useEffectOnce(() => {
-      // presetting step
-      !isLanguageExist("thanosql") && setThanoSQL();
-    });
 
     useEffectOnce(() => {
       if (editorRef.current) {

@@ -36,3 +36,5 @@ export class WorkerManager {
     return _client;
   }
 }
+
+export default WorkerManager;

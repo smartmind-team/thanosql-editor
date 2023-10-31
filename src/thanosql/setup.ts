@@ -4,59 +4,32 @@ import CompletionItemKind = monacoEditor.languages.CompletionItemKind;
 import { WorkerManager } from "@/thanosql/WorkerManager";
 import { ThanosWorker } from "@/thanosql/ThanosWorker";
 import DiagnosticsAdapter from "@/thanosql/DiagnosticsAdapter";
-import "@/thanosql/thanos.worker";
+import { dispose } from "@/util/monaco-util";
 
-export function setupLanguage(monaco: any = monacoEditor) {
+export function setupLanguage(monaco = monacoEditor) {
+  registerLanguage(monaco);
+  const disposable = registerProvider(monaco);
+  return () => disposable.dispose();
+}
+
+export const registerLanguage = (monaco = monacoEditor) => {
   monaco.languages.register(languageExtensionPoint);
-  monaco.languages.onLanguage(languageID, () => {
-    monaco.languages.setMonarchTokensProvider(languageID, monarchLanguage);
-    const client = new WorkerManager();
-    const worker: WorkerAccessor = (...uris: monacoEditor.Uri[]): Promise<ThanosWorker> => {
-      return client.getLanguageServiceWorker(...uris);
-    };
-    //Call the errors provider
-    new DiagnosticsAdapter(worker);
-  });
 
-  // CompletionItemProvider Setting
-  monaco.languages.registerCompletionItemProvider(languageID, {
-    provideCompletionItems: (model, position) => {
-      const suggestions = [
-        ...monarchLanguage.thanosqlKeywords.map((k: string) => ({
-          label: k,
-          kind: CompletionItemKind.Keyword,
-          insertText: k,
-        })),
-        ...monarchLanguage.thanosqlOperators.map((k: string) => ({
-          label: k,
-          kind: CompletionItemKind.Operator,
-          insertText: k,
-        })),
-        ...monarchLanguage.pgKeywords.map((k: string) => ({
-          label: k,
-          kind: CompletionItemKind.Function,
-          insertText: k,
-        })),
-        ...monarchLanguage.pgOperators.map((k: string) => ({
-          label: k,
-          kind: CompletionItemKind.Function,
-          insertText: k,
-        })),
-        ...monarchLanguage.pgBuiltinFunctions.map((k: string) => ({
-          label: k,
-          kind: CompletionItemKind.Function,
-          insertText: k,
-        })),
-        ...monarchLanguage.pgBuiltinVariables.map((k: string) => ({
-          label: k,
-          kind: CompletionItemKind.Function,
-          insertText: k,
-        })),
-      ];
-      return { suggestions };
+  /** configuration */
+  monaco.languages.setLanguageConfiguration("thanosql", {
+    comments: {
+      lineComment: "--",
+      blockComment: ["/*", "*/"],
+    },
+    indentationRules: {
+      // ^(.*\*/)?\s*\}.*$a
+      decreaseIndentPattern: /^((?!.*?\/\*).*\*\/)?\s*[\}\]\)].*$/,
+      // ^.*\([^)"';]*$
+      increaseIndentPattern: /^((?!\/\/).)*(\([^)"'`]*|\([^)"'`]*|\[[^\]"'`]*);$/,
     },
   });
 
+  /** theme */
   // keyword - #604BCC
   // operator - #B05A9F
   // builtin function - #42988F
@@ -78,6 +51,7 @@ export function setupLanguage(monaco: any = monacoEditor) {
     },
   });
 
+  /** key bind rules */
   monaco.editor.addKeybindingRules([
     {
       keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.Minus,
@@ -92,19 +66,69 @@ export function setupLanguage(monaco: any = monacoEditor) {
       command: "editor.action.fontZoomReset",
     },
   ]);
+};
 
-  monaco.languages.setLanguageConfiguration("thanosql", {
-    comments: {
-      lineComment: "--",
-      blockComment: ["/*", "*/"],
-    },
-    indentationRules: {
-      // ^(.*\*/)?\s*\}.*$a
-      decreaseIndentPattern: /^((?!.*?\/\*).*\*\/)?\s*[\}\]\)].*$/,
-      // ^.*\([^)"';]*$
-      increaseIndentPattern: /^((?!\/\/).)*(\([^)"'`]*|\([^)"'`]*|\[[^\]"'`]*);$/,
-    },
-  });
-}
+export const registerProvider = (monaco = monacoEditor) => {
+  const disposable: monacoEditor.IDisposable[] = [];
+
+  dispose(disposable);
+
+  disposable.push(
+    monaco.languages.onLanguage(languageID, () => {
+      disposable.push(monaco.languages.setMonarchTokensProvider(languageID, monarchLanguage));
+
+      const client = new WorkerManager();
+      const worker: WorkerAccessor = (...uris: monacoEditor.Uri[]): Promise<ThanosWorker> => {
+        return client.getLanguageServiceWorker(...uris);
+      };
+
+      //Call the errors provider
+      disposable.push(new DiagnosticsAdapter(worker));
+    }),
+  );
+
+  // CompletionItemProvider Setting
+  disposable.push(
+    monaco.languages.registerCompletionItemProvider(languageID, {
+      provideCompletionItems: (model, position) => {
+        const suggestions = [
+          ...monarchLanguage.thanosqlKeywords.map((k: string) => ({
+            label: k,
+            kind: CompletionItemKind.Keyword,
+            insertText: k,
+          })),
+          ...monarchLanguage.thanosqlOperators.map((k: string) => ({
+            label: k,
+            kind: CompletionItemKind.Operator,
+            insertText: k,
+          })),
+          ...monarchLanguage.pgKeywords.map((k: string) => ({
+            label: k,
+            kind: CompletionItemKind.Function,
+            insertText: k,
+          })),
+          ...monarchLanguage.pgOperators.map((k: string) => ({
+            label: k,
+            kind: CompletionItemKind.Function,
+            insertText: k,
+          })),
+          ...monarchLanguage.pgBuiltinFunctions.map((k: string) => ({
+            label: k,
+            kind: CompletionItemKind.Function,
+            insertText: k,
+          })),
+          ...monarchLanguage.pgBuiltinVariables.map((k: string) => ({
+            label: k,
+            kind: CompletionItemKind.Function,
+            insertText: k,
+          })),
+        ];
+        return { suggestions };
+      },
+    }),
+  );
+
+  return { dispose: () => dispose(disposable) };
+};
 
 export type WorkerAccessor = (...uris: monacoEditor.Uri[]) => Promise<ThanosWorker>;

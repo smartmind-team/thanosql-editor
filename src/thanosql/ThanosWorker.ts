@@ -23,3 +23,5 @@ export class ThanosWorker {
     return model.getValue();
   }
 }
+
+export default ThanosWorker;

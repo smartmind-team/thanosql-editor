@@ -1,4 +1,3 @@
-import { setupLanguage } from "@/thanosql/setup";
 import * as monaco from "monaco-editor-core";
 
 export const isLanguageExist = (languageID: string) => !!monaco.editor.getModels().find(model => model.id === languageID);
@@ -27,7 +26,11 @@ export const createEditorState = (states?: monaco.editor.ICodeEditorViewState): 
   };
 };
 
-if (!isLanguageExist("thanosql")) setupLanguage();
+export const dispose = (disposable: monaco.IDisposable[]) => {
+  while (disposable.length) {
+    disposable.pop()?.dispose();
+  }
+};
 
 export interface CreateModelOptions {
   value?: string;

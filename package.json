@@ -2,7 +2,11 @@
   "name": "@smartmind-team/thanosql-editor",
   "version": "1.1.4-alpha.6",
   "description": "",
+  "module": "./lib/esm/index.js",
   "types": "./lib/esm/index.d.ts",
+  "files": [
+    "**"
+  ],
   "exports": {
     ".": {
       "require": {
@@ -13,14 +17,6 @@
         "default": "./lib/esm/index.js",
         "types": "./lib/esm/index.d.ts"
       }
-    },
-    "./thanosql": {
-      "require": [
-        "./lib/cjs/thanosql/*.js"
-      ],
-      "import": [
-        "./lib/esm/thanosql/*.js"
-      ]
     }
   },
   "scripts": {

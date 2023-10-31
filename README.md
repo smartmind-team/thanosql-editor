@@ -36,17 +36,47 @@ npm install @smartmind-team/thanosql-editor@latest
 
 It serves esm as well as cjs, and this component is available in both module environments.
 
-> **Warning**
->
+> [!WARNING]  
 > **thanos.worker.js is not working yet**, so you can see the error about workerPath.
 
+1. At first, you must set EditorProvider as parent component about Editor Component.
+
+```ts
+// main.tsx
+import { StrictMode } from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import "./index.css";
+import { EditorProvider, EditorStore } from "@smartmind-team/thanosql-editor";
+
+const EditorStoreClient = new EditorStore();
+
+// To set defaultTab on EditorProvider initialization:
+import { defaultTab } from "./assets/config.js";
+const editorSessionStore = new EditorSessionStore();
+editorSessionStore.setTabSession(defaultTab.id, { model: createModel({ value: "-- default session!", language: "thanosql" }), state: null });
+
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  <StrictMode>
+    // The store will be automatically setted. Use store property only when you want to specify more than one session setting on EditorProvider initialization."
+    <EditorProvider store={editorSessionStore}>
+      <App />
+    </EditorProvider>
+  </StrictMode>,
+);
+```
+
+2. Then, you can use Editor Component under Provider.
 ```ts
 // App.tsx
 import Editor from "@smartmind-team/thanosql-editor";
 import { useEditorContext } from "@smartmind-team/thanosql-editor";
 
 function App() {
-  const { isQueryStarting, setQueryStarting } = useEditorContext();
+  const { getEditorModule } = useEditorContext();
+  const { changeTabSession, setIsQueryStarting, isEditorLoading, getEditor, getValue } = getEditorModule("example")! ?? {};
+  // or
+  // const modules = getEditorModule("example");
   return (
     <div
       className="App"
@@ -59,25 +89,24 @@ function App() {
       <div style={{ fontSize: "1rem", fontWeight: 900 }}>Editor Example</div>
       <div style={{ flex: 2 }}>
         <Editor
+          editorId="example"
           language="thanosql"
-          workerPaths={{
-            default: {
-              url: "../node_modules/monaco-editor-core/esm/vs/editor/editor.worker.js",
-              base: window.location.href,
-              isModule: true,
-            },
-            thanosql: {
-              url: "../node_modules/@smartmind-team/thanosql-editor/lib/esm/thanosql/thanos.worker.js",
-              base: window.location.href,
-              isModule: true,
-            },
-          }}
-          onStartQuery={editor => {
-            setIsQueryStarting(true);
-            const queryValue = editor?.getValue();
-            console.log(queryValue);
-            setTimeout(() => setIsQueryStarting(false), 2000);
-          }}
+          launcherProps={{
+              onStartQuery: handleStart,
+              onStopQuery: () => console.log("stop"),
+              /** You can customize the launcher components for the remaining space in the launcher. **/
+              children: (
+                <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", height: "100%" }}>
+                  <>test action</>
+                </div>
+              ),
+            }}
+          /**
+            If you set defaultSessionId, then editor creates and stores editor session(model, state) in EditorStore so that you can access the session with this sessionId.
+            defaultSession is used when the Editor component has mounted. so if you changes some value in this session and then remount the Editor component (without reloading the window), Editor will not override defaultValue but restore session value.
+          **/
+          defaultSessionId="example"
+          defaultValue={"-- default value"}
         />
       </div>
     </div>
@@ -87,27 +116,21 @@ function App() {
 export default App;
 ```
 
-```ts
-// main.tsx
-import { StrictMode } from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./index.css";
-import { EditorProvider, EditorStore } from "@smartmind-team/thanosql-editor";
 
-const EditorStoreClient = new EditorStore();
+#### 🍴Editor Props
 
-// To set a custom default session ID, create your own session ID and send it to the EditorProvider's props.
-const DefaultSessionID = "yourCustomSessionID";
+The Editor component also has HTMLAttributes that are applied to the Editor container div element.
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <StrictMode>
-    <EditorProvider store={EditorStoreClient} sessionID={DefaultSessionID}>
-      <App />
-    </EditorProvider>
-  </StrictMode>,
-);
-```
+|name|type|default|description|
+|-----|-----|-----|-----------|
+|editorId|string||editorId for discriminating editor component|
+|language|string|"thanosql"|language Id|
+|defaultSessionId|string|undefined|editor default session Id|
+|width|string or number|undefined|editor width|
+|height|string or number|undefined|editor height|
+|options|monaco.editor.IStandaloneEditorConstructionOptions|undefined| https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html |
+|launcherProps|{onStartQuery?: EditorLauncherEventHandler; onStopQuery?: EditorLauncherEventHandler; editor?: monaco.editor.IStandaloneCodeEditor;}|undefined|launcher component props|
+|launcherDisabled|boolean|false|when you set true, launcher is deactivated|
 
 ## Development Setting
 

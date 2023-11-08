@@ -1,6 +1,5 @@
-import { memo } from "react";
+import { RefAttributes, memo } from "react";
 
-import { EditorProps } from "./Editor";
-import Editor from "./Editor";
-
-export default memo<EditorProps>(Editor);
+import Editor, { type EditorModule, type EditorProps } from "./Editor";
+export default memo<EditorProps & RefAttributes<EditorModule>>(Editor);
+export type { EditorProps, EditorModule };

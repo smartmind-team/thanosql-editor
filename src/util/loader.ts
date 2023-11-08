@@ -10,13 +10,13 @@ export const initMonacoWorker = () => {
   ["thanosql", "default"].map(label => pipe(appendScript, getMonacoWorkerScript)({ label, path: config?.[label]?.path }));
 };
 
-const loadScript = (src: string) => {
+export const loadScript = (src: string) => {
   const script: HTMLScriptElement = document.createElement("script");
   script.src = src;
   return script;
 };
 
-const appendScript = (script: HTMLScriptElement) => document.body.appendChild(script);
+export const appendScript = (script: HTMLScriptElement) => document.body.appendChild(script);
 
 const getMonacoWorkerScript = ({ onLoad = () => console.log("load"), label = "default", path }) => {
   const script = loadScript(`https://cdn.jsdelivr.net/npm/${path ?? "monaco-editor@0.34.1/esm/vs/editor/editor.worker.js"}`);

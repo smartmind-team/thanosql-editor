@@ -15,7 +15,7 @@ const defaultNodeResolveConfig = {
   extensions,
   browser: true,
   moduleDirectories: ["node_modules"],
-  dedeupe: ["antlr4", "react", "react-dom"],
+  dedeupe: ["antlr4", "antlr4ng", "react", "react-dom"],
   resolveOnly: [/antlr4ts/],
   preferBuiltins: false,
 };
@@ -57,29 +57,7 @@ export default [
     input: "src/index.ts",
     external,
     output: {
-      dir: "lib/cjs/",
-      format: "cjs",
-      exports: "named",
-      preserveModules: true,
-      sourcemap: "inline",
-    },
-    plugins: [
-      ...commonPlugins,
-      copy({
-        targets: [
-          { src: "src/assets", dest: "lib/cjs" },
-          { src: "src/index.css", dest: "lib/cjs" },
-        ],
-      }),
-    ],
-    context: "window",
-  },
-  {
-    cache: false,
-    input: "src/index.ts",
-    external,
-    output: {
-      dir: "lib/esm/",
+      dir: "lib",
       format: "es",
       preserveModules: true,
       sourcemap: "inline",
@@ -88,8 +66,8 @@ export default [
       ...commonPlugins,
       copy({
         targets: [
-          { src: "src/assets", dest: "lib/esm" },
-          { src: "src/index.css", dest: "lib/esm" },
+          { src: "src/assets", dest: "lib" },
+          { src: "src/index.css", dest: "lib" },
         ],
       }),
     ],

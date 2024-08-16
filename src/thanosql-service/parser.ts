@@ -1,35 +1,18 @@
-import thanosParser, { ThanosLanguageContext } from "@/ANTLR/thanosParser";
-import thanosLexer from "@/ANTLR/thanosLexer";
-import { CharStreams, CommonTokenStream } from "antlr4";
-import ThanosErrorListener, { IThanosError } from "./ThanosErrorListener";
+import PostgreSQLParser from "@/ANTLR/PostgreSQLParser";
 
-export default function parse(code: string): {
-  ast: ThanosLanguageContext;
-  errors: IThanosError[];
-} {
-  const inputStream = CharStreams.fromString(code);
-  const lexer = new thanosLexer(inputStream);
-  lexer.removeErrorListeners();
-  const thanosErrorsListener = new ThanosErrorListener();
-  lexer.addErrorListener(thanosErrorsListener);
-
-  const tokenStream = new CommonTokenStream(lexer);
-  const parser = new thanosParser(tokenStream);
-  parser.removeErrorListeners();
-  parser.addErrorListener(thanosErrorsListener);
-
-  const ast = parser.thanosLanguage();
-  const errors: IThanosError[] = thanosErrorsListener.getErrors();
-
+export function parse(code: string) {
+  const parser = new PostgreSQLParser();
+  const ast = parser.GetParsedSqlTree(code);
+  const errors = parser.errorListener.getErrors();
   return { ast, errors };
 }
 
-export function parseAndGetASTRoot(code: string): ThanosLanguageContext {
+export function parseAndGetASTRoot(code: string) {
   const { ast } = parse(code);
   return ast;
 }
 
-export function parseAndGetSyntaxErrors(code: string): IThanosError[] {
+export function parseAndGetSyntaxErrors(code: string) {
   const { errors } = parse(code);
   return errors;
 }

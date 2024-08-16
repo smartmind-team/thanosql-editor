@@ -16,4 +16,5 @@ export { setWorkers } from "./util/setWorkers";
 export { useEditorRefs } from "./util/hooks/useEditorRefs";
 export { createModel, createEditorState } from "./util/monaco-util";
 
+export * as worker from "./thanosql/thanos.worker";
 export default Editor;

@@ -10,7 +10,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      thanosql: resolve("node_modules/@smartmind-team/thanosql-editor/lib/esm/thanosql"),
+      thanosql: resolve("node_modules/@smartmind-team/thanosql-editor/lib/thanosql"),
     },
   },
 });

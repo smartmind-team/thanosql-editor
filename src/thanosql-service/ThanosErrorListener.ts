@@ -11,6 +11,7 @@ export interface IThanosError {
 
 export default class ThanosErrorListener implements ErrorListener<any> {
   private errors: IThanosError[] = [];
+
   syntaxError(
     recognizer: Recognizer<any>,
     offendingSymbol: any,
@@ -29,6 +30,9 @@ export default class ThanosErrorListener implements ErrorListener<any> {
     });
   }
 
+  reportAmbiguity() {}
+  reportAttemptingFullContext() {}
+  reportContextSensitivity() {}
   getErrors(): IThanosError[] {
     return this.errors;
   }

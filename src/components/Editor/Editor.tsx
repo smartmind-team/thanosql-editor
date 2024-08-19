@@ -9,9 +9,9 @@ import { EditorSessionStore } from "@/EditorSessionStore";
 import { useEffectOnce } from "@/util/hooks/useEffectOnce";
 import { type CreateModelOptions, createModel } from "@/util/monaco-util";
 
-const path = await import.meta.resolve("../../thanosql/thanos.worker.js");
 (self as any).MonacoEnvironment = {
-  getWorker: function (_id, _label) {
+  getWorker: async function (_id, _label) {
+    const path = await import.meta.resolve("../../thanosql/thanos.worker.js");
     const workerUrl = new URL(path, import.meta.url);
     console.log("init worker", path, workerUrl.href);
     return new Worker(workerUrl.href, { type: "module" });

@@ -1,3 +1,2 @@
-import { setupLanguage } from "./setup";
-
-setupLanguage();
+export { setupLanguage } from "./setup";
+export * as config from "./config";

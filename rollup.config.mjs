@@ -15,7 +15,7 @@ const defaultNodeResolveConfig = {
   extensions,
   browser: true,
   moduleDirectories: ["node_modules"],
-  dedeupe: ["antlr4", "antlr4ng", "react", "react-dom"],
+  dedeupe: ["antlr4", "antlr4ng", "react", "react-dom", "monaco-editor-core"],
   resolveOnly: [/antlr4ts/],
   preferBuiltins: false,
 };

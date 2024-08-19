@@ -1,13 +1,23 @@
 import "../../index.css";
-import "@/thanosql";
+import { setupLanguage } from "@/thanosql";
 import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useState, Dispatch, useMemo } from "react";
 import * as monaco from "monaco-editor-core";
 import EditorLauncher, { type EditorLauncherProps, type EditorLauncherModule } from "@/components/EditorLauncher";
-import { WorkerPaths, setWorkers } from "@/util/setWorkers";
+import { WorkerPaths } from "@/util/setWorkers";
 import { useEditorContext } from "@/editorContext";
 import { EditorSessionStore } from "@/EditorSessionStore";
 import { useEffectOnce } from "@/util/hooks/useEffectOnce";
 import { type CreateModelOptions, createModel } from "@/util/monaco-util";
+
+const path = await import.meta.resolve("../../thanosql/thanos.worker.js");
+(self as any).MonacoEnvironment = {
+  getWorker: function (_id, _label) {
+    const workerUrl = new URL(path, import.meta.url);
+    console.log("init worker", path, workerUrl.href);
+    return new Worker(workerUrl.href, { type: "module" });
+  },
+};
+setupLanguage(monaco);
 
 const Editor = forwardRef<EditorModule, EditorProps>(
   (
@@ -73,7 +83,6 @@ const Editor = forwardRef<EditorModule, EditorProps>(
 
     const createEditor = useCallback(() => {
       if (!containerRef.current || effectCalled.current) return;
-      setWorkers(workerPaths);
 
       const model = defaultSessionId
         ? store.getSessionState(defaultSessionId)?.model ?? store.createTabSession(defaultSessionId, { language, value: defaultValue }).model

@@ -9,8 +9,6 @@ export default defineConfig({
     port: 5174,
   },
   resolve: {
-    alias: {
-      thanosql: resolve("node_modules/@smartmind-team/thanosql-editor/lib/thanosql"),
-    },
+    alias: {},
   },
 });

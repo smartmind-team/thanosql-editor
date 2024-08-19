@@ -10,6 +10,12 @@
         "default": "./lib/index.js",
         "types": "./lib/index.d.ts"
       }
+    },
+    "./thanosql-worker": {
+      "import": {
+        "default": "./lib/thanosql/thanos.worker.js",
+        "types": "./lib/thanosql/thanos.worker.d.ts"
+      }
     }
   },
   "scripts": {

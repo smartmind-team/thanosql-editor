@@ -6,7 +6,7 @@ import { EditorProvider, EditorSessionStore, createEditorState, createModel, set
 import { RecoilRoot } from "recoil";
 
 //@ts-ignore
-import thanosWorker from "thanosql/thanos.worker?worker&url";
+import thanosWorker from "@smartmind-team/thanosql-editor/thanosql-worker?worker&url";
 
 setWorkers({
   default: {

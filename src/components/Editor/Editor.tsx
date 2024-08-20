@@ -3,20 +3,12 @@ import { setupLanguage } from "@/thanosql";
 import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useState, Dispatch, useMemo } from "react";
 import * as monaco from "monaco-editor-core";
 import EditorLauncher, { type EditorLauncherProps, type EditorLauncherModule } from "@/components/EditorLauncher";
-import { WorkerPaths } from "@/util/setWorkers";
+import { setWorkers, WorkerPaths } from "@/util/setWorkers";
 import { useEditorContext } from "@/editorContext";
 import { EditorSessionStore } from "@/EditorSessionStore";
 import { useEffectOnce } from "@/util/hooks/useEffectOnce";
 import { type CreateModelOptions, createModel } from "@/util/monaco-util";
 
-(self as any).MonacoEnvironment = {
-  getWorker: async function (_id, _label) {
-    const path = await import.meta.resolve("../../thanosql/thanos.worker.js");
-    const workerUrl = new URL(path, import.meta.url);
-    console.log("init worker", path, workerUrl.href);
-    return new Worker(workerUrl.href, { type: "module" });
-  },
-};
 setupLanguage(monaco);
 
 const Editor = forwardRef<EditorModule, EditorProps>(
@@ -45,6 +37,10 @@ const Editor = forwardRef<EditorModule, EditorProps>(
     const modelChangeEffect = useRef<monaco.IDisposable>();
 
     const [isEditorLoading, setIsEditorLoading] = useState(true);
+
+    useEffect(() => {
+      workerPaths && setWorkers(workerPaths);
+    }, [workerPaths]);
 
     const module = useMemo<EditorModule>(
       () => ({

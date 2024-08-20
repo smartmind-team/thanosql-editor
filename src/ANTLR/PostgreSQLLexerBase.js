@@ -45,7 +45,8 @@ export default class PostgreSQLLexerBase extends Lexer {
   }
 
   charIsLetter() {
-    return this.inputStream.LA(-1).toLowerCase() != this.inputStream.LA(-1).toUpperCase();
+    let str = String(this.inputStream.LA(-1));
+    return str.length === 1 && str.match(/[a-z]/i);
   }
 
   HandleNumericFail() {

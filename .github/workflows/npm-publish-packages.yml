@@ -40,11 +40,11 @@ jobs:
 
       # Install Dependencies
       - name: Install Dependencies
-        run: yarn && yarn prepare
+        run: npm ci && npm run prepare
 
       # Build Packages
       - name: Build Packages
-        run: yarn build
+        run: npm run build
 
       # Configure Git
       - name: Git configuration
@@ -84,7 +84,7 @@ jobs:
 
       # Publish
       - name: Publish NPM Packages
-        run: yarn publish --verbose --access public --tag ${{ env.RELEASE_TAG }}
+        run: npm publish --verbose --access public --tag ${{ env.RELEASE_TAG }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

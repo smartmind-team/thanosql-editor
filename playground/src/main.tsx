@@ -5,15 +5,6 @@ import "./index.css";
 import { EditorProvider, EditorSessionStore, createEditorState, createModel, setWorkers } from "@smartmind-team/thanosql-editor";
 import { RecoilRoot } from "recoil";
 
-//@ts-ignore
-import thanosWorker from "thanosql/thanos.worker?worker&url";
-
-setWorkers({
-  default: {
-    url: thanosWorker,
-  },
-});
-
 // To set defaultTab on EditorProvider initialization:
 import { defaultTab } from "./assets/config.js";
 const editorSessionStore = new EditorSessionStore();

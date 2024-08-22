@@ -1,4 +1,4 @@
-import { parseAndGetSyntaxErrors, parseAndGetASTRoot } from "./parser";
+import { parseAndGetSyntaxErrors } from "./parser";
 import { IThanosError } from "./ThanosErrorListener";
 
 export default class ThanosLanguageService {

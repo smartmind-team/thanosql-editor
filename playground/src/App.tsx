@@ -1,9 +1,18 @@
-import Editor, { EditorLauncherProps, EditorModule } from "@smartmind-team/thanosql-editor";
+import Editor, { EditorLauncherProps, setWorkers } from "@smartmind-team/thanosql-editor";
 import { useEditorContext } from "@smartmind-team/thanosql-editor";
 import { useState } from "react";
 import { useTabNavStates, TabNav } from "./TabNav";
 import { defaultTab } from "./assets/config";
 import { v4 } from "uuid";
+
+//@ts-ignore
+import path from "@smartmind-team/thanosql-editor/thanosql-worker?worker&url";
+setWorkers({
+  default: {
+    url: path,
+    base: import.meta.url,
+  },
+});
 
 function App() {
   const [testQuery, setTestQuery] = useState("");
@@ -20,7 +29,7 @@ function App() {
   };
 
   const addStoredQueryTab = (value?: string) => {
-    const editor = editorRefs?.current["example"].getEditor();
+    const editor = editorRefs?.current["example"]?.getEditor();
     if (!editor) return;
 
     const newTab = { id: v4(), name: "tab" + (TabList?.length + 1) };
@@ -64,18 +73,6 @@ function App() {
             editorId="example"
             defaultSessionId={activeTab?.id ?? defaultTab.id}
             language="thanosql"
-            workerPaths={{
-              default: {
-                url: "../node_modules/monaco-editor-core/esm/vs/editor/editor.worker.js",
-                base: window.location.href,
-                isModule: true,
-              },
-              thanosql: {
-                url: "../node_modules/@smartmind-team/thanosql-editor/lib/esm/thanosql/thanos.worker.js",
-                base: window.location.href,
-                isModule: true,
-              },
-            }}
             launcherProps={{
               onStartQuery: handleStart,
               onStopQuery: () => console.log("stop"),

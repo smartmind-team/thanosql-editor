@@ -1,30 +1,20 @@
 import "../../index.css";
-import "@/thanosql";
+import { registerLanguage, registerProvider } from "@/thanosql";
 import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useState, Dispatch, useMemo } from "react";
 import * as monaco from "monaco-editor-core";
 import EditorLauncher, { type EditorLauncherProps, type EditorLauncherModule } from "@/components/EditorLauncher";
-import { WorkerPaths, setWorkers } from "@/util/setWorkers";
 import { useEditorContext } from "@/editorContext";
 import { EditorSessionStore } from "@/EditorSessionStore";
 import { useEffectOnce } from "@/util/hooks/useEffectOnce";
 import { type CreateModelOptions, createModel } from "@/util/monaco-util";
 
+// preset language thanosql
+registerLanguage(monaco);
+registerProvider(monaco);
+
 const Editor = forwardRef<EditorModule, EditorProps>(
   (
-    {
-      editorId,
-      language = "thanosql",
-      defaultValue,
-      width,
-      height,
-      style,
-      workerPaths,
-      options,
-      launcherProps,
-      launcherDisabled,
-      defaultSessionId,
-      ...props
-    },
+    { editorId, language = "thanosql", defaultValue, width, height, style, options, launcherProps, launcherDisabled, defaultSessionId, ...props },
     ref,
   ) => {
     const { editorRefs, activeEditors, setActiveEditors, ...store } = useEditorContext();
@@ -73,7 +63,6 @@ const Editor = forwardRef<EditorModule, EditorProps>(
 
     const createEditor = useCallback(() => {
       if (!containerRef.current || effectCalled.current) return;
-      setWorkers(workerPaths);
 
       const model = defaultSessionId
         ? store.getSessionState(defaultSessionId)?.model ?? store.createTabSession(defaultSessionId, { language, value: defaultValue }).model
@@ -105,7 +94,7 @@ const Editor = forwardRef<EditorModule, EditorProps>(
       if (state) editorRef.current.restoreViewState(state);
       setIsEditorLoading(false);
       effectCalled.current = true;
-    }, [language, defaultValue, workerPaths, options]);
+    }, [language, defaultValue, options]);
 
     const setEditorRef = useCallback(() => {
       editorRefs.current[editorId] = module;
@@ -122,7 +111,9 @@ const Editor = forwardRef<EditorModule, EditorProps>(
 
     useEffect(() => {
       modelChangeEffect.current?.dispose();
-      modelChangeEffect.current = editorRef.current?.onDidChangeModel(() => editorRef.current.focus());
+      modelChangeEffect.current = editorRef.current?.onDidChangeModel(() => {
+        editorRef.current.focus();
+      });
       return () => {
         editorRefs && delete editorRefs.current?.[editorId];
         setActiveEditors(new Set(Object.keys(editorRefs.current)));
@@ -162,7 +153,6 @@ export interface EditorCustomProps {
   defaultValue?: string;
   width?: string | number;
   height?: string | number;
-  workerPaths?: WorkerPaths;
   options?: monaco.editor.IStandaloneEditorConstructionOptions;
   launcherProps?: Exclude<EditorLauncherProps, "editor">;
   launcherDisabled?: boolean;

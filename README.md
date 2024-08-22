@@ -34,10 +34,7 @@ npm install @smartmind-team/thanosql-editor@latest
 
 ## Usage
 
-It serves esm as well as cjs, and this component is available in both module environments.
-
-> [!WARNING]  
-> **thanos.worker.js is not working yet**, so you can see the error about workerPath.
+It serves esm, and this component is available in both module environments.
 
 1. At first, you must set EditorProvider as parent component about Editor Component.
 
@@ -58,7 +55,8 @@ editorSessionStore.setTabSession(defaultTab.id, { model: createModel({ value: "-
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
-    // The store will be automatically setted. Use store property only when you want to specify more than one session setting on EditorProvider initialization."
+    // The store will be automatically setted. Use store property only when you want to specify more than one session setting on EditorProvider
+    initialization."
     <EditorProvider store={editorSessionStore}>
       <App />
     </EditorProvider>
@@ -67,10 +65,25 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 ```
 
 2. Then, you can use Editor Component under Provider.
+
 ```ts
 // App.tsx
 import Editor from "@smartmind-team/thanosql-editor";
-import { useEditorContext } from "@smartmind-team/thanosql-editor";
+import { useEditorContext, setWorkers } from "@smartmind-team/thanosql-editor";
+
+// on vite
+import path from "@smartmind-team/thanosql-editor/thanosql-worker?worker&url";
+
+// other platforms
+const path = await import.meta.resolve("../node_modules/@smartmind-team/thanosql-editor/thanosql/thanos.worker.js");
+
+// worker setting
+setWorkers({
+  default: {
+    url: path,
+    base: import.meta.url,
+  },
+});
 
 function App() {
   const { getEditorModule } = useEditorContext();
@@ -92,15 +105,15 @@ function App() {
           editorId="example"
           language="thanosql"
           launcherProps={{
-              onStartQuery: handleStart,
-              onStopQuery: () => console.log("stop"),
-              /** You can customize the launcher components for the remaining space in the launcher. **/
-              children: (
-                <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", height: "100%" }}>
-                  <>test action</>
-                </div>
-              ),
-            }}
+            onStartQuery: handleStart,
+            onStopQuery: () => console.log("stop"),
+            /** You can customize the launcher components for the remaining space in the launcher. **/
+            children: (
+              <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", height: "100%" }}>
+                <>test action</>
+              </div>
+            ),
+          }}
           /**
             If you set defaultSessionId, then editor creates and stores editor session(model, state) in EditorStore so that you can access the session with this sessionId.
             defaultSession is used when the Editor component has mounted. so if you changes some value in this session and then remount the Editor component (without reloading the window), Editor will not override defaultValue but restore session value.
@@ -116,21 +129,20 @@ function App() {
 export default App;
 ```
 
-
 #### 🍴Editor Props
 
 The Editor component also has HTMLAttributes that are applied to the Editor container div element.
 
-|name|type|default|description|
-|-----|-----|-----|-----------|
-|editorId|string||editorId for discriminating editor component|
-|language|string|"thanosql"|language Id|
-|defaultSessionId|string|undefined|editor default session Id|
-|width|string or number|undefined|editor width|
-|height|string or number|undefined|editor height|
-|options|monaco.editor.IStandaloneEditorConstructionOptions|undefined| https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html |
-|launcherProps|{onStartQuery?: EditorLauncherEventHandler; onStopQuery?: EditorLauncherEventHandler; editor?: monaco.editor.IStandaloneCodeEditor;}|undefined|launcher component props|
-|launcherDisabled|boolean|false|when you set true, launcher is deactivated|
+| name             | type                                                                                                                                 | default    | description                                                                                                   |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------- |
+| editorId         | string                                                                                                                               |            | editorId for discriminating editor component                                                                  |
+| language         | string                                                                                                                               | "thanosql" | language Id                                                                                                   |
+| defaultSessionId | string                                                                                                                               | undefined  | editor default session Id                                                                                     |
+| width            | string or number                                                                                                                     | undefined  | editor width                                                                                                  |
+| height           | string or number                                                                                                                     | undefined  | editor height                                                                                                 |
+| options          | monaco.editor.IStandaloneEditorConstructionOptions                                                                                   | undefined  | https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html |
+| launcherProps    | {onStartQuery?: EditorLauncherEventHandler; onStopQuery?: EditorLauncherEventHandler; editor?: monaco.editor.IStandaloneCodeEditor;} | undefined  | launcher component props                                                                                      |
+| launcherDisabled | boolean                                                                                                                              | false      | when you set true, launcher is deactivated                                                                    |
 
 ## Development Setting
 
@@ -163,9 +175,14 @@ npm run dev # vite server will be run.
 
 ### [part 1] Antlr setting
 
+Current ThanoSQL is based on antlr4 PostgreSQL grammer. Please check this page. https://github.com/antlr/grammars-v4/tree/master/sql/postgresql
+
 1. Update .antlr/\*.g4 files.
-2. Convert .g4 file to JavaScirpt and put in `src/ANTLR/`. Please look up antlr4 javascript [guide](https://github.com/antlr/antlr4/blob/master/doc/javascript-target.md#how-to-create-a-javascript-lexer-or-parser)
-   > **These Antlr files, created with TypeScript, are used in files inside 'src/thanosql-service'.**
+2. Convert .g4 file to JavaScirpt and put in `src/ANTLR/`:
+
+```
+npm run antlr4
+```
 
 ### [part 2] Monaco setting for ThanoSQL
 

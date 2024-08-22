@@ -9,7 +9,6 @@ export default class DiagnosticsAdapter {
 
   constructor(private worker: WorkerAccessor) {
     const onModelAdd = (model: monaco.editor.IModel): void => {
-      console.log("on model add", model.getValue(), model.uri);
       let handle: any;
       this.validate(model.uri);
       this.disposable.push(

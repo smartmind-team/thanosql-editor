@@ -34,10 +34,7 @@ npm install @smartmind-team/thanosql-editor@latest
 
 ## Usage
 
-It serves esm as well as cjs, and this component is available in both module environments.
-
-> [!WARNING]  
-> **thanos.worker.js is not working yet**, so you can see the error about workerPath.
+It serves esm, and this component is available in both module environments.
 
 1. At first, you must set EditorProvider as parent component about Editor Component.
 
@@ -72,7 +69,21 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 ```ts
 // App.tsx
 import Editor from "@smartmind-team/thanosql-editor";
-import { useEditorContext } from "@smartmind-team/thanosql-editor";
+import { useEditorContext, setWorkers } from "@smartmind-team/thanosql-editor";
+
+// on vite
+import path from "@smartmind-team/thanosql-editor/thanosql-worker?worker&url";
+
+// other platforms
+const path = await import.meta.resolve("../node_modules/@smartmind-team/thanosql-editor/thanosql/thanos.worker.js");
+
+// worker setting
+setWorkers({
+  default: {
+    url: path,
+    base: import.meta.url,
+  },
+});
 
 function App() {
   const { getEditorModule } = useEditorContext();
@@ -164,9 +175,14 @@ npm run dev # vite server will be run.
 
 ### [part 1] Antlr setting
 
+Current ThanoSQL is based on antlr4 PostgreSQL grammer. Please check this page. https://github.com/antlr/grammars-v4/tree/master/sql/postgresql
+
 1. Update .antlr/\*.g4 files.
-2. Convert .g4 file to JavaScirpt and put in `src/ANTLR/`. Please look up antlr4 javascript [guide](https://github.com/antlr/antlr4/blob/master/doc/javascript-target.md#how-to-create-a-javascript-lexer-or-parser)
-   > **These Antlr files, created with TypeScript, are used in files inside 'src/thanosql-service'.**
+2. Convert .g4 file to JavaScirpt and put in `src/ANTLR/`:
+
+```
+npm run antlr4
+```
 
 ### [part 2] Monaco setting for ThanoSQL
 

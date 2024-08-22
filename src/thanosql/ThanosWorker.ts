@@ -20,7 +20,6 @@ export class ThanosWorker {
 
   private getTextDocuments(uri: string): string {
     const model = this._ctx.getMirrorModels().find(model => model.uri.toString() === uri); // When there are multiple files open, this will be an array
-
     return model.getValue();
   }
 }

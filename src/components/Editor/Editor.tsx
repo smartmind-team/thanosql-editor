@@ -112,7 +112,6 @@ const Editor = forwardRef<EditorModule, EditorProps>(
     useEffect(() => {
       modelChangeEffect.current?.dispose();
       modelChangeEffect.current = editorRef.current?.onDidChangeModel(() => {
-        console.log("model change");
         editorRef.current.focus();
       });
       return () => {

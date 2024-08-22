@@ -37,7 +37,6 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           # Defaults to the user or organization that owns the workflow file
           scope: "@octocat"
-          token: ${{ secrets.PAT_TOKEN }}
 
       # Install Dependencies
       - name: Install Dependencies

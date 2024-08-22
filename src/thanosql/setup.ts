@@ -6,12 +6,6 @@ import { ThanosWorker } from "@/thanosql/ThanosWorker";
 import DiagnosticsAdapter from "@/thanosql/DiagnosticsAdapter";
 import { dispose } from "@/util/monaco-util";
 
-export function setupLanguage(monaco = monacoEditor) {
-  registerLanguage(monaco);
-  const disposable = registerProvider(monaco);
-  return () => disposable.dispose();
-}
-
 export const registerLanguage = (monaco = monacoEditor) => {
   monaco.languages.register(languageExtensionPoint);
 
@@ -76,12 +70,10 @@ export const registerProvider = (monaco = monacoEditor) => {
   disposable.push(
     monaco.languages.onLanguage(languageID, () => {
       disposable.push(monaco.languages.setMonarchTokensProvider(languageID, monarchLanguage));
-
       const client = new WorkerManager();
       const worker: WorkerAccessor = (...uris: monacoEditor.Uri[]): Promise<ThanosWorker> => {
         return client.getLanguageServiceWorker(...uris);
       };
-
       //Call the errors provider
       disposable.push(new DiagnosticsAdapter(worker));
     }),

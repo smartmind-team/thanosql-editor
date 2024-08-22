@@ -13,13 +13,14 @@ export class ThanosWorker {
     this.languageService = new ThanosLanguageService();
   }
 
-  doValidation(): Promise<IThanosError[]> {
-    const code = this.getTextDocument();
+  doValidation(uri: string): Promise<IThanosError[]> {
+    const code = this.getTextDocuments(uri);
     return Promise.resolve(this.languageService.validate(code));
   }
 
-  private getTextDocument(): string {
-    const model = this._ctx.getMirrorModels()[0]; // When there are multiple files open, this will be an array
+  private getTextDocuments(uri: string): string {
+    const model = this._ctx.getMirrorModels().find(model => model.uri.toString() === uri); // When there are multiple files open, this will be an array
+
     return model.getValue();
   }
 }

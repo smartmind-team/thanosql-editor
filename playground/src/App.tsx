@@ -1,9 +1,18 @@
-import Editor, { EditorLauncherProps } from "@smartmind-team/thanosql-editor";
+import Editor, { EditorLauncherProps, setWorkers } from "@smartmind-team/thanosql-editor";
 import { useEditorContext } from "@smartmind-team/thanosql-editor";
 import { useState } from "react";
 import { useTabNavStates, TabNav } from "./TabNav";
 import { defaultTab } from "./assets/config";
 import { v4 } from "uuid";
+
+//@ts-ignore
+import path from "@smartmind-team/thanosql-editor/thanosql-worker?worker&url";
+setWorkers({
+  default: {
+    url: path,
+    base: import.meta.url,
+  },
+});
 
 function App() {
   const [testQuery, setTestQuery] = useState("");

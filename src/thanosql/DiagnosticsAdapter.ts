@@ -9,7 +9,9 @@ export default class DiagnosticsAdapter {
 
   constructor(private worker: WorkerAccessor) {
     const onModelAdd = (model: monaco.editor.IModel): void => {
+      console.log("on model add", model.getValue(), model.uri);
       let handle: any;
+      this.validate(model.uri);
       this.disposable.push(
         model.onDidChangeContent(() => {
           // here we are Debouncing the user changes, so every time a new change is done, we wait 500ms before validating
@@ -17,12 +19,9 @@ export default class DiagnosticsAdapter {
           clearTimeout(handle);
           handle = setTimeout(() => {
             this.validate(model.uri);
-            // console.log("validate call");
-          }, 500);
+          }, 100);
         }),
       );
-
-      this.validate(model.uri);
     };
     this.disposable.push(monaco.editor.onDidCreateModel(onModelAdd));
     monaco.editor.getModels().forEach(onModelAdd);
@@ -32,7 +31,7 @@ export default class DiagnosticsAdapter {
     // get the worker proxy
     const worker = await this.worker(resource);
     // call the validate method proxy from the language service and get errors
-    const errorMarkers = await worker.doValidation();
+    const errorMarkers = await worker.doValidation(resource.toString());
     // get the current model(editor or file) which is only one
     const model = monaco.editor.getModel(resource);
     // add the error markers and underline them with severity of Error
